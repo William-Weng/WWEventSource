@@ -3,7 +3,7 @@ from flask import Flask, Response, request
 
 app = Flask(__name__)
 post = 12345
-host ="0.0.0.0"
+host = "0.0.0.0"
 
 @app.route('/sse', methods=['POST'])
 def sse():
@@ -19,4 +19,4 @@ def __event_stream__(content: str, delay_time: float):
         time.sleep(delay_time)
 
 if __name__ == '__main__':
-    app.run(host=host,port=post, debug=True)
+    app.run(host=host, port=post, debug=True)

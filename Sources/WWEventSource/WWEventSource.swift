@@ -39,7 +39,6 @@ public extension WWEventSource {
     ///   - queue: OperationQueue?
     /// - Returns: Result<URLSessionDataTask?, Error>
     func connect(httpMethod: Constant.HttpMethod = .GET, delegate: WWEventSourceDelegate?, urlString: String, parameters: [String: String?]? = nil, headers: [String: String?]? = nil, httpBodyType: Constant.HttpBobyType? = nil, configuration: URLSessionConfiguration = .default, queue: OperationQueue? = nil) -> Result<URLSessionDataTask?, Error> {
-        
         return connect(httpMethod: httpMethod, delegate: delegate, urlString: urlString, queryItems: parameters?._queryItems(), headers: headers, httpBodyType: httpBodyType, configuration: configuration, queue: queue)
     }
     
