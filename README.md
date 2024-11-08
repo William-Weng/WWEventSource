@@ -36,7 +36,7 @@ final class ViewController: UIViewController {
 
     @IBOutlet weak var eventStringLabel: UILabel!
     
-    private let urlString = "http://192.168.4.92:12345/sse"
+    private let urlString = "http://localhost:12345/sse"
     private var tempString = ""
     
     override func viewDidLoad() {
