@@ -13,7 +13,7 @@ let package = Package(
     ],
     targets: [
         .target(name: "WWEventSource"),
-        .testTarget(name: "WWEventSourceTests", dependencies: ["WWEventSource"]),
+        .testTarget(name: "WWEventSourceTests", dependencies: ["WWEventSource"], resources: [.copy("Privacy")]),
     ],
     swiftLanguageVersions: [
         .v5
