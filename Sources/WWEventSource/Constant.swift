@@ -6,18 +6,58 @@
 //
 
 import UIKit
+import WWRegularExpression
 
 // MARK: - Constant
-open class Constant: NSObject {}
-
-// MARK: - typealias
-public extension Constant {
+public extension WWEventSource.Constant {
     
     /// [SSE的連線狀態](https://www.ruanyifeng.com/blog/2017/05/server-sent_events.html)
     enum ConnectionStatus {
         case connecting
         case open
         case closed
+    }
+    
+    public enum Keyword {
+        
+        case id     // id: <事件序號>\n
+        case data   // data: <訊息>\n\n
+        case event  // event: <錯誤訊息>\n
+        case retry  // retry: <重新連結秒數>\n
+        case custom(keyword: String) // 自訂
+        
+        /// 解析文字
+        /// - Parameters:
+        ///   - rawString: 原始文字
+        ///   - newlineCount: 結尾"\n"的數量
+        /// - Returns: Result<[String]?, Error>
+        func parseRawString(_ rawString: String, newlineCount: UInt) -> Result<[String]?, Error> {
+            return WWRegularExpression.Method.extracts(text: rawString, pattern: pattern(newlineCount: newlineCount)).calculate()
+        }
+        
+        /// 產生過濾事件字串的正規式 ("data: <文字>\n\n" => 文字)
+        /// - Parameter newlineCount: 結尾"\n"的數量
+        /// - Returns: String
+        private func pattern(newlineCount: UInt = 2) -> String {
+            
+            var newline = ""
+            for index in 1...newlineCount { newline += "\n" }
+            
+            return "(?<=\(self.prefix()): )([\\w\\d\\s]{1,})(?=\(newline))"
+        }
+        
+        /// 事件前綴字 (data / event)
+        /// - Returns: String
+        private func prefix() -> String {
+            
+            switch self {
+            case .id: return "id"
+            case .data: return "data"
+            case .event: return "event"
+            case .retry: return "retry"
+            case .custom(let keyword): return "\(keyword)"
+            }
+        }
     }
     
     /// 自訂錯誤

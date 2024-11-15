@@ -10,7 +10,7 @@
 ### [Installation with Swift Package Manager](https://medium.com/彼得潘的-swift-ios-app-開發問題解答集/使用-spm-安裝第三方套件-xcode-11-新功能-2c4ffcf85b4b)
 ```bash
 dependencies: [
-    .package(url: "https://github.com/William-Weng/WWEventSource.git", .upToNextMajor(from: "1.0.0"))
+    .package(url: "https://github.com/William-Weng/WWEventSource.git", .upToNextMajor(from: "1.1.0"))
 ]
 ```
 
@@ -18,6 +18,7 @@ dependencies: [
 |函式|功能|
 |-|-|
 |connect(httpMethod:delegate:urlString:parameters:headers:httpBodyType:configuration:queue:)|開啟SSE連線|
+|parseRawString(_:keyword:newlineCount:)|解析原始文字|
 |disconnect()|關閉SSE連線|
 
 ### WWEventSourceDelegate
@@ -29,15 +30,15 @@ dependencies: [
 ### Example
 ```swift
 import UIKit
-import WWEventSource
 import WWPrint
+import WWEventSource
 
 final class ViewController: UIViewController {
 
     @IBOutlet weak var eventStringLabel: UILabel!
     
     private let urlString = "http://localhost:12345/sse"
-    private var tempString = ""
+    private var tempMessage = ""
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -51,12 +52,22 @@ final class ViewController: UIViewController {
 
 extension ViewController: WWEventSourceDelegate {
     
-    func serverSentEvents(_ eventSource: WWEventSource, eventString: String) {
-        tempString += eventString
-        DispatchQueue.main.async { self.eventStringLabel.text = self.tempString }
+    func serverSentEvents(_ eventSource: WWEventSource, rawString: String) {
+        
+        let result = eventSource.parseRawString(rawString, keyword: .data)
+        
+        switch result {
+        case .failure(let error): wwPrint(error)
+        case .success(let array):
+            
+            guard let message = array?.first else { return }
+            
+            tempMessage += message
+            DispatchQueue.main.async { self.eventStringLabel.text = self.tempMessage }
+        }
     }
     
-    func serverSentEventsConnectionStatus(_ eventSource: WWEventSource, result: Result<Constant.ConnectionStatus, Error>) {
+    func serverSentEventsConnectionStatus(_ eventSource: WWEventSource, result: Result<WWEventSource.Constant.ConnectionStatus, Error>) {
         switch result {
         case .failure(let error): wwPrint(error)
         case .success(let status): wwPrint(status)
@@ -64,4 +75,5 @@ extension ViewController: WWEventSourceDelegate {
     }
 }
 ```
+
 

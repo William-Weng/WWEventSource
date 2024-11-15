@@ -7,8 +7,8 @@
 //
 
 import UIKit
-import WWEventSource
 import WWPrint
+import WWEventSource
 
 // MARK: - ViewController
 final class ViewController: UIViewController {
@@ -16,7 +16,7 @@ final class ViewController: UIViewController {
     @IBOutlet weak var eventStringLabel: UILabel!
     
     private let urlString = "http://localhost:12345/sse"
-    private var tempString = ""
+    private var tempMessage = ""
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -31,12 +31,22 @@ final class ViewController: UIViewController {
 // MARK: - WWEventSourceDelegate
 extension ViewController: WWEventSourceDelegate {
     
-    func serverSentEvents(_ eventSource: WWEventSource, eventString: String) {
-        tempString += eventString
-        DispatchQueue.main.async { self.eventStringLabel.text = self.tempString }
+    func serverSentEvents(_ eventSource: WWEventSource, rawString: String) {
+        
+        let result = eventSource.parseRawString(rawString, keyword: .data)
+        
+        switch result {
+        case .failure(let error): wwPrint(error)
+        case .success(let array):
+            
+            guard let message = array?.first else { return }
+            
+            tempMessage += message
+            DispatchQueue.main.async { self.eventStringLabel.text = self.tempMessage }
+        }
     }
     
-    func serverSentEventsConnectionStatus(_ eventSource: WWEventSource, result: Result<Constant.ConnectionStatus, Error>) {
+    func serverSentEventsConnectionStatus(_ eventSource: WWEventSource, result: Result<WWEventSource.Constant.ConnectionStatus, Error>) {
         switch result {
         case .failure(let error): wwPrint(error)
         case .success(let status): wwPrint(status)

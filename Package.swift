@@ -11,9 +11,11 @@ let package = Package(
     products: [
         .library(name: "WWEventSource", targets: ["WWEventSource"]),
     ],
+    dependencies: [
+        .package(url: "https://github.com/William-Weng/WWRegularExpression", from: "1.0.1"),
+    ],
     targets: [
-        .target(name: "WWEventSource"),
-        .testTarget(name: "WWEventSourceTests", dependencies: ["WWEventSource"], resources: [.copy("Privacy")]),
+        .target(name: "WWEventSource", dependencies: ["WWRegularExpression"], resources: [.copy("Privacy")]),
     ],
     swiftLanguageVersions: [
         .v5

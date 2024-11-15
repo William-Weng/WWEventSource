@@ -10,6 +10,8 @@ import UIKit
 // MARK: - WWEventSource
 open class WWEventSource: NSObject {
     
+    open class Constant: NSObject {}
+    
     public static let shared: WWEventSource = WWEventSource()
     
     private var session: URLSession?
@@ -49,6 +51,16 @@ public extension WWEventSource {
         dataTask?.cancel()
         session?.invalidateAndCancel()
     }
+    
+    /// 解析原始文字 ("data: 文字\n\n" => 文字)
+    /// - Parameters:
+    ///   - rawString: 原始文字
+    ///   - keyword: Constant.Keyword
+    ///   - newlineCount: 結尾"\n"的數量
+    /// - Returns: Result<[String]?, Error>
+    func parseRawString(_ rawString: String, keyword: Constant.Keyword, newlineCount: UInt = 2) -> Result<[String]?, Error> {
+        return keyword.parseRawString(rawString, newlineCount: newlineCount)
+    }
 }
 
 // MARK: - URLSessionDataDelegate
@@ -59,8 +71,8 @@ extension WWEventSource: URLSessionDataDelegate {
         receivedData.append(data)
         self.delegate?.serverSentEventsConnectionStatus(self, result: .success(.open))
         
-        if let eventString = String(data: receivedData, encoding: .utf8) {
-            delegate?.serverSentEvents(self, eventString: eventString)
+        if let rawString = String(data: receivedData, encoding: .utf8) {
+            delegate?.serverSentEvents(self, rawString: rawString)
             receivedData.removeAll()
         }
     }
@@ -104,7 +116,9 @@ private extension WWEventSource {
         request.httpBody = httpBodyType?.data()
         request.addValue("application/json", forHTTPHeaderField: "Content-Type")
         request.addValue("text/event-stream", forHTTPHeaderField: "Accept")
-        
+        request.addValue("text/event-stream", forHTTPHeaderField: "Accept")
+        request.addValue("text/event-stream", forHTTPHeaderField: "Accept")
+
         session = URLSession(configuration: configuration, delegate: self, delegateQueue: queue)
         
         dataTask = session?.dataTask(with: request)
