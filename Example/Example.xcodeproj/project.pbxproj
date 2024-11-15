@@ -442,8 +442,8 @@
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/William-Weng/WWEventSource";
 			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 1.0.1;
+				kind = upToNextMinorVersion;
+				minimumVersion = 1.1.0;
 			};
 		};
 		8175EA9A2CDDB49500EA3E67 /* XCRemoteSwiftPackageReference "WWPrint" */ = {
