@@ -14,9 +14,14 @@ def sse():
     return Response(__event_stream__(content, delay_time), mimetype='text/event-stream')
 
 def __event_stream__(content: str, delay_time: float):
+
+    yield f'event: open\n'
+
     for char in content:
         yield f"data: {char}\n\n"
         time.sleep(delay_time)
+    
+    yield f'event: done\n\n'
 
 if __name__ == '__main__':
     app.run(host=host, port=post, debug=True)

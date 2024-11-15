@@ -11,20 +11,32 @@ import WWRegularExpression
 // MARK: - Constant
 public extension WWEventSource.Constant {
     
+    typealias EventValue = (keyword: Keyword, value: String)    // (事件類型, 事件值)
+    
     /// [SSE的連線狀態](https://www.ruanyifeng.com/blog/2017/05/server-sent_events.html)
     enum ConnectionStatus {
+        
         case connecting
         case open
         case closed
     }
     
-    public enum Keyword {
+    /// SSE事件關鍵字
+    public enum Event {
+        
+        case id(_ keyword: Keyword, _ value: Int)
+        case event(_ keyword: Keyword, _ value: String)
+        case retry(_ keyword: Keyword, _ value: Int)
+        case data(_ keyword: Keyword, _ value: String)
+    }
+    
+    /// SSE訊息關鍵字
+    public enum Keyword: CaseIterable {
         
         case id     // id: <事件序號>\n
-        case data   // data: <訊息>\n\n
         case event  // event: <錯誤訊息>\n
         case retry  // retry: <重新連結秒數>\n
-        case custom(keyword: String) // 自訂
+        case data   // data: <訊息>\n\n
         
         /// 解析文字
         /// - Parameters:
@@ -43,7 +55,8 @@ public extension WWEventSource.Constant {
             var newline = ""
             for index in 1...newlineCount { newline += "\n" }
             
-            return "(?<=\(self.prefix()): )([\\w\\d\\s]{1,})(?=\(newline))"
+            let pattern = "(?<=\(self.prefix()))(.{1,})(?=\(newline))"
+            return pattern
         }
         
         /// 事件前綴字 (data / event)
@@ -51,11 +64,10 @@ public extension WWEventSource.Constant {
         private func prefix() -> String {
             
             switch self {
-            case .id: return "id"
-            case .data: return "data"
-            case .event: return "event"
-            case .retry: return "retry"
-            case .custom(let keyword): return "\(keyword)"
+            case .id: return "id: "
+            case .event: return "event: "
+            case .retry: return "retry: "
+            case .data: return "data: "
             }
         }
     }

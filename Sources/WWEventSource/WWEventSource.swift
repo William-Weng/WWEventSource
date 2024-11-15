@@ -65,15 +65,25 @@ public extension WWEventSource {
 
 // MARK: - URLSessionDataDelegate
 extension WWEventSource: URLSessionDataDelegate {
-    
+        
     public func urlSession(_ session: URLSession, dataTask: URLSessionDataTask, didReceive data: Data) {
         
         receivedData.append(data)
-        self.delegate?.serverSentEventsConnectionStatus(self, result: .success(.open))
+        delegate?.serverSentEventsConnectionStatus(self, result: .success(.open))
+        
+        defer { receivedData.removeAll() }
         
         if let rawString = String(data: receivedData, encoding: .utf8) {
+            
+            var eventValues: [Constant.EventValue] = []
             delegate?.serverSentEvents(self, rawString: rawString)
-            receivedData.removeAll()
+            
+            for keyword in Constant.Keyword.allCases {
+                guard let value = try? parseRawString(rawString, keyword: keyword, newlineCount: 1).get()?.first else { continue }
+                eventValues.append((keyword, value))
+            }
+            
+            eventValues.forEach { delegate?.serverSentEvents(self, eventValue: $0) }
         }
     }
     

@@ -9,7 +9,8 @@
 /* Begin PBXBuildFile section */
 		815041F22CE6E1C600735DEC /* WWEventSource in Frameworks */ = {isa = PBXBuildFile; productRef = 815041F12CE6E1C600735DEC /* WWEventSource */; };
 		815F2A082CE71C6500E85459 /* WWPrint in Frameworks */ = {isa = PBXBuildFile; productRef = 815F2A072CE71C6500E85459 /* WWPrint */; };
-		815F2A0B2CE72BB300E85459 /* WWEventSource in Frameworks */ = {isa = PBXBuildFile; productRef = 815F2A0A2CE72BB300E85459 /* WWEventSource */; };
+		815F2A0E2CE72E7100E85459 /* WWEventSource in Frameworks */ = {isa = PBXBuildFile; productRef = 815F2A0D2CE72E7100E85459 /* WWEventSource */; };
+		815F2A112CE74AC000E85459 /* WWEventSource in Frameworks */ = {isa = PBXBuildFile; productRef = 815F2A102CE74AC000E85459 /* WWEventSource */; };
 		817567FC2CA2C2B400B24577 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 817567FB2CA2C2B400B24577 /* AppDelegate.swift */; };
 		817568002CA2C2B400B24577 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 817567FF2CA2C2B400B24577 /* ViewController.swift */; };
 		817568032CA2C2B400B24577 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 817568012CA2C2B400B24577 /* Main.storyboard */; };
@@ -36,7 +37,8 @@
 			files = (
 				815F2A082CE71C6500E85459 /* WWPrint in Frameworks */,
 				815041F22CE6E1C600735DEC /* WWEventSource in Frameworks */,
-				815F2A0B2CE72BB300E85459 /* WWEventSource in Frameworks */,
+				815F2A112CE74AC000E85459 /* WWEventSource in Frameworks */,
+				815F2A0E2CE72E7100E85459 /* WWEventSource in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -140,7 +142,8 @@
 			packageProductDependencies = (
 				815041F12CE6E1C600735DEC /* WWEventSource */,
 				815F2A072CE71C6500E85459 /* WWPrint */,
-				815F2A0A2CE72BB300E85459 /* WWEventSource */,
+				815F2A0D2CE72E7100E85459 /* WWEventSource */,
+				815F2A102CE74AC000E85459 /* WWEventSource */,
 			);
 			productName = Example;
 			productReference = 817567F82CA2C2B400B24577 /* Example.app */;
@@ -172,7 +175,7 @@
 			mainGroup = 817567EF2CA2C2B400B24577;
 			packageReferences = (
 				8175EA9A2CDDB49500EA3E67 /* XCRemoteSwiftPackageReference "WWPrint" */,
-				815F2A092CE72BB300E85459 /* XCRemoteSwiftPackageReference "WWEventSource" */,
+				815F2A0F2CE74AC000E85459 /* XCRemoteSwiftPackageReference "WWEventSource" */,
 			);
 			productRefGroup = 817567F92CA2C2B400B24577 /* Products */;
 			projectDirPath = "";
@@ -438,11 +441,11 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
-		815F2A092CE72BB300E85459 /* XCRemoteSwiftPackageReference "WWEventSource" */ = {
+		815F2A0F2CE74AC000E85459 /* XCRemoteSwiftPackageReference "WWEventSource" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/William-Weng/WWEventSource";
 			requirement = {
-				kind = upToNextMinorVersion;
+				kind = upToNextMajorVersion;
 				minimumVersion = 1.1.0;
 			};
 		};
@@ -466,9 +469,13 @@
 			package = 8175EA9A2CDDB49500EA3E67 /* XCRemoteSwiftPackageReference "WWPrint" */;
 			productName = WWPrint;
 		};
-		815F2A0A2CE72BB300E85459 /* WWEventSource */ = {
+		815F2A0D2CE72E7100E85459 /* WWEventSource */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = 815F2A092CE72BB300E85459 /* XCRemoteSwiftPackageReference "WWEventSource" */;
+			productName = WWEventSource;
+		};
+		815F2A102CE74AC000E85459 /* WWEventSource */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 815F2A0F2CE74AC000E85459 /* XCRemoteSwiftPackageReference "WWEventSource" */;
 			productName = WWEventSource;
 		};
 /* End XCSwiftPackageProductDependency section */
