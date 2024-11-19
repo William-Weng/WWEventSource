@@ -2,7 +2,7 @@ import time
 from flask import Flask, Response, request
 
 app = Flask(__name__)
-post = 12345
+post = 54321
 host = "0.0.0.0"
 
 @app.route('/sse', methods=['POST'])
@@ -15,6 +15,7 @@ def sse():
 
 def __event_stream__(content: str, delay_time: float):
 
+    yield f'id: 3939889\n'
     yield f'event: open\n'
 
     for char in content:

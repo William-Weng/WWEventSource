@@ -15,7 +15,7 @@ final class ViewController: UIViewController {
 
     @IBOutlet weak var eventStringLabel: UILabel!
     
-    private let urlString = "http://localhost:12345/sse"
+    private let urlString = "http://localhost:54321/sse"
     private var tempMessage = ""
     
     override func viewDidLoad() {
@@ -23,7 +23,7 @@ final class ViewController: UIViewController {
     }
     
     @IBAction func sseTest(_ sender: UIBarButtonItem) {
-        let dictionary: [String : Any] = ["content": "你猜猜現在是幾點？", "delayTime": 0.25]
+        let dictionary: [String : Any] = ["content": "We’ve trained a model called ChatGPT which interacts in a conversational way. The dialogue format makes it possible for ChatGPT to answer followup questions, admit its mistakes, challenge incorrect premises, and reject inappropriate requests.", "delayTime": 0.05]
         tempMessage = ""
         _ = WWEventSource.shared.connect(httpMethod: .POST, delegate: self, urlString: urlString, httpBodyType: .dictionary(dictionary))
     }
@@ -31,6 +31,14 @@ final class ViewController: UIViewController {
 
 // MARK: - WWEventSourceDelegate
 extension ViewController: WWEventSourceDelegate {
+        
+    func serverSentEventsConnectionStatus(_ eventSource: WWEventSource, result: Result<WWEventSource.Constant.ConnectionStatus, Error>) {
+        wwPrint(result)
+    }
+    
+    func serverSentEvents(_ eventSource: WWEventSource, rawString: String) {
+        wwPrint(rawString)
+    }
     
     func serverSentEvents(_ eventSource: WWEventSource, eventValue: WWEventSource.Constant.EventValue) {
         
@@ -38,19 +46,9 @@ extension ViewController: WWEventSourceDelegate {
         case .id: wwPrint(eventValue)
         case .event: wwPrint(eventValue)
         case .retry: wwPrint(eventValue)
-        case .data:
+        case .data: wwPrint(eventValue)
             tempMessage += eventValue.value
             DispatchQueue.main.async { self.eventStringLabel.text = self.tempMessage }
         }
-    }
-    
-    func serverSentEvents(_ eventSource: WWEventSource, rawString: String) {
-        
-        if let event = try? eventSource.parseRawString(rawString, keyword: .event, newlineCount: 1).get()?.first { wwPrint("event = \(event)") }
-        wwPrint(rawString)
-    }
-    
-    func serverSentEventsConnectionStatus(_ eventSource: WWEventSource, result: Result<WWEventSource.Constant.ConnectionStatus, Error>) {
-        wwPrint(result)
     }
 }

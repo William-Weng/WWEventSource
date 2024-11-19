@@ -10,7 +10,7 @@
 ### [Installation with Swift Package Manager](https://medium.com/彼得潘的-swift-ios-app-開發問題解答集/使用-spm-安裝第三方套件-xcode-11-新功能-2c4ffcf85b4b)
 ```bash
 dependencies: [
-    .package(url: "https://github.com/William-Weng/WWEventSource.git", .upToNextMajor(from: "1.1.0"))
+    .package(url: "https://github.com/William-Weng/WWEventSource.git", .upToNextMajor(from: "1.2.0"))
 ]
 ```
 
@@ -18,15 +18,14 @@ dependencies: [
 |函式|功能|
 |-|-|
 |connect(httpMethod:delegate:urlString:parameters:headers:httpBodyType:configuration:queue:)|開啟SSE連線|
-|parseRawString(_:keyword:newlineCount:)|解析原始文字|
 |disconnect()|關閉SSE連線|
 
 ### WWEventSourceDelegate
 |函式|功能|
 |-|-|
-|serverSentEvents(_:eventValue:)|接收從Server端傳來的事件訊息|
-|serverSentEvents(_:eventString:)|接收從Server端傳來的原始訊息|
 |serverSentEventsConnectionStatus(_:result:)|接收連線的狀態|
+|serverSentEvents(_:rawString:)|接收從Server端傳來的原始訊息|
+|serverSentEvents(_:eventValue:)|接收從Server端傳來的事件訊息|
 
 ### Example
 ```swift
@@ -39,7 +38,7 @@ final class ViewController: UIViewController {
 
     @IBOutlet weak var eventStringLabel: UILabel!
     
-    private let urlString = "http://localhost:12345/sse"
+    private let urlString = "http://localhost:54321/sse"
     private var tempMessage = ""
     
     override func viewDidLoad() {
@@ -47,7 +46,7 @@ final class ViewController: UIViewController {
     }
     
     @IBAction func sseTest(_ sender: UIBarButtonItem) {
-        let dictionary: [String : Any] = ["content": "你猜猜現在是幾點？", "delayTime": 0.25]
+        let dictionary: [String : Any] = ["content": "We’ve trained a model called ChatGPT which interacts in a conversational way. The dialogue format makes it possible for ChatGPT to answer followup questions, admit its mistakes, challenge incorrect premises, and reject inappropriate requests.", "delayTime": 0.05]
         tempMessage = ""
         _ = WWEventSource.shared.connect(httpMethod: .POST, delegate: self, urlString: urlString, httpBodyType: .dictionary(dictionary))
     }
@@ -55,6 +54,14 @@ final class ViewController: UIViewController {
 
 // MARK: - WWEventSourceDelegate
 extension ViewController: WWEventSourceDelegate {
+        
+    func serverSentEventsConnectionStatus(_ eventSource: WWEventSource, result: Result<WWEventSource.Constant.ConnectionStatus, Error>) {
+        wwPrint(result)
+    }
+    
+    func serverSentEvents(_ eventSource: WWEventSource, rawString: String) {
+        wwPrint(rawString)
+    }
     
     func serverSentEvents(_ eventSource: WWEventSource, eventValue: WWEventSource.Constant.EventValue) {
         
@@ -62,22 +69,11 @@ extension ViewController: WWEventSourceDelegate {
         case .id: wwPrint(eventValue)
         case .event: wwPrint(eventValue)
         case .retry: wwPrint(eventValue)
-        case .data:
+        case .data: wwPrint(eventValue)
             tempMessage += eventValue.value
             DispatchQueue.main.async { self.eventStringLabel.text = self.tempMessage }
         }
     }
-    
-    func serverSentEvents(_ eventSource: WWEventSource, rawString: String) {
-        
-        if let event = try? eventSource.parseRawString(rawString, keyword: .event, newlineCount: 1).get()?.first { wwPrint("event = \(event)") }
-        wwPrint(rawString)
-    }
-    
-    func serverSentEventsConnectionStatus(_ eventSource: WWEventSource, result: Result<WWEventSource.Constant.ConnectionStatus, Error>) {
-        wwPrint(result)
-    }
 }
 ```
-
 

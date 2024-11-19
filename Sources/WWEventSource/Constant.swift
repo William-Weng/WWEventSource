@@ -38,36 +38,27 @@ public extension WWEventSource.Constant {
         case retry  // retry: <重新連結秒數>\n
         case data   // data: <訊息>\n\n
         
-        /// 解析文字
+        /// 解析事件文字 (data: 文字\n\n => 文字)
         /// - Parameters:
-        ///   - rawString: 原始文字
-        ///   - newlineCount: 結尾"\n"的數量
+        ///   - eventString: 原始文字
         /// - Returns: Result<[String]?, Error>
-        func parseRawString(_ rawString: String, newlineCount: UInt) -> Result<[String]?, Error> {
-            return WWRegularExpression.Method.extracts(text: rawString, pattern: pattern(newlineCount: newlineCount)).calculate()
-        }
-        
-        /// 產生過濾事件字串的正規式 ("data: <文字>\n\n" => 文字)
-        /// - Parameter newlineCount: 結尾"\n"的數量
-        /// - Returns: String
-        private func pattern(newlineCount: UInt = 2) -> String {
+        func parseEventString(_ eventString: String) -> Result<[String]?, Error> {
             
-            var newline = ""
-            for index in 1...newlineCount { newline += "\n" }
+            let pattern = "(?<=\(self.prefix()) ).*"
+            let result = WWRegularExpression.Method.extracts(text: eventString, pattern: pattern).calculate()
             
-            let pattern = "(?<=\(self.prefix()))(.{1,})(?=\(newline))"
-            return pattern
+            return result
         }
         
         /// 事件前綴字 (data / event)
         /// - Returns: String
-        private func prefix() -> String {
+        func prefix() -> String {
             
             switch self {
-            case .id: return "id: "
-            case .event: return "event: "
-            case .retry: return "retry: "
-            case .data: return "data: "
+            case .id: return "id:"
+            case .event: return "event:"
+            case .retry: return "retry:"
+            case .data: return "data:"
             }
         }
     }

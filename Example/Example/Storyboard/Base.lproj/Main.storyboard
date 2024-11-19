@@ -17,8 +17,8 @@
                         <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="n1U-dh-ZgW">
-                                <rect key="frame" x="207" y="448" width="0.0" height="0.0"/>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="n1U-dh-ZgW">
+                                <rect key="frame" x="20" y="92" width="374" height="0.0"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="24"/>
                                 <color key="textColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <nil key="highlightedColor"/>
@@ -27,8 +27,9 @@
                         <viewLayoutGuide key="safeArea" id="6Tk-OE-BBY"/>
                         <color key="backgroundColor" systemColor="systemYellowColor"/>
                         <constraints>
-                            <constraint firstItem="n1U-dh-ZgW" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="Sz3-j2-6Yd"/>
-                            <constraint firstItem="n1U-dh-ZgW" firstAttribute="centerY" secondItem="8bC-Xf-vdC" secondAttribute="centerY" id="bBL-cA-zkz"/>
+                            <constraint firstItem="n1U-dh-ZgW" firstAttribute="top" secondItem="6Tk-OE-BBY" secondAttribute="top" id="47h-Ma-JNt"/>
+                            <constraint firstItem="n1U-dh-ZgW" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" constant="20" id="5s0-kK-Zce"/>
+                            <constraint firstItem="n1U-dh-ZgW" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="wE2-Ht-vvG"/>
                         </constraints>
                     </view>
                     <navigationItem key="navigationItem" title="Server Sent Events" id="ASc-YT-plj">

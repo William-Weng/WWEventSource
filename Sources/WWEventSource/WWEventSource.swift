@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import WWRegularExpression
 
 // MARK: - WWEventSource
 open class WWEventSource: NSObject {
@@ -51,40 +52,18 @@ public extension WWEventSource {
         dataTask?.cancel()
         session?.invalidateAndCancel()
     }
-    
-    /// 解析原始文字 ("data: 文字\n\n" => 文字)
-    /// - Parameters:
-    ///   - rawString: 原始文字
-    ///   - keyword: Constant.Keyword
-    ///   - newlineCount: 結尾"\n"的數量
-    /// - Returns: Result<[String]?, Error>
-    func parseRawString(_ rawString: String, keyword: Constant.Keyword, newlineCount: UInt = 2) -> Result<[String]?, Error> {
-        return keyword.parseRawString(rawString, newlineCount: newlineCount)
-    }
 }
 
 // MARK: - URLSessionDataDelegate
 extension WWEventSource: URLSessionDataDelegate {
-        
+    
     public func urlSession(_ session: URLSession, dataTask: URLSessionDataTask, didReceive data: Data) {
-        
-        receivedData.append(data)
-        delegate?.serverSentEventsConnectionStatus(self, result: .success(.open))
         
         defer { receivedData.removeAll() }
         
-        if let rawString = String(data: receivedData, encoding: .utf8) {
-            
-            var eventValues: [Constant.EventValue] = []
-            delegate?.serverSentEvents(self, rawString: rawString)
-            
-            for keyword in Constant.Keyword.allCases {
-                guard let value = try? parseRawString(rawString, keyword: keyword, newlineCount: 1).get()?.first else { continue }
-                eventValues.append((keyword, value))
-            }
-            
-            eventValues.forEach { delegate?.serverSentEvents(self, eventValue: $0) }
-        }
+        delegate?.serverSentEventsConnectionStatus(self, result: .success(.open))
+        receivedData.append(data)
+        parseEvents(with: receivedData)
     }
     
     public func urlSession(_ session: URLSession, task: URLSessionTask, didCompleteWithError error: Error?) {
@@ -126,8 +105,6 @@ private extension WWEventSource {
         request.httpBody = httpBodyType?.data()
         request.addValue("application/json", forHTTPHeaderField: "Content-Type")
         request.addValue("text/event-stream", forHTTPHeaderField: "Accept")
-        request.addValue("text/event-stream", forHTTPHeaderField: "Accept")
-        request.addValue("text/event-stream", forHTTPHeaderField: "Accept")
 
         session = URLSession(configuration: configuration, delegate: self, delegateQueue: queue)
         
@@ -136,5 +113,104 @@ private extension WWEventSource {
         
         self.delegate?.serverSentEventsConnectionStatus(self, result: .success(.connecting))
         return .success(dataTask)
+    }
+    
+    /// 解析傳來的事件值
+    /// - Parameter receivedData: Data
+    func parseEvents(with receivedData: Data) {
+        
+        guard let rawString = String(data: receivedData, encoding: .utf8) else { return }
+        
+        var eventValues: [Constant.EventValue] = []
+        
+        delegate?.serverSentEvents(self, rawString: rawString)
+        
+        parseEventArray(rawString: rawString).forEach { event in
+            
+            for keyword in Constant.Keyword.allCases {
+                guard let value = try? parseEventString(event, keyword: keyword).get() else { continue }
+                eventValues.append((keyword, value))
+            }
+        }
+        
+        eventValues.forEach { delegate?.serverSentEvents(self, eventValue: $0) }
+    }
+    
+    /// 解析傳來的SSE事件文字訊息 (id: 123\nevent: 英\r文字\ndata: 中\n文\r字\n\n =>  ["id: 123\n", "event: 英\r文字\n", "data: 中\n文\r字\n\n"])
+    /// - Parameter rawString: String
+    /// - Returns: [String]
+    func parseEventArray(rawString: String) -> [String] {
+                
+        var eventArray: [String] = []
+        var _array: [String] = []
+        
+        rawString.components(separatedBy: "\n").forEach { string in
+            
+            let isMatche = matche(rawString: string)
+            
+            if (isMatche) { eventArray.append("\(string)\n"); return }
+            
+            if (!_array.isEmpty) {
+                
+                guard let lastEvent = eventArray.popLast(),
+                      let _event = Optional.some(_array.joined(separator: ""))
+                else {
+                    return
+                }
+                
+                eventArray.append("\(lastEvent)\(_event)")
+                _array = []
+            }
+            
+            _array.append("\(string)\n")
+        }
+        
+        return eventArray
+    }
+    
+    /// 測試看看文字是否符合SSE的格式 => id:/event:/data:開頭的
+    /// - Parameter rawString: String
+    /// - Returns: Bool
+    func matche(rawString: String) -> Bool {
+        
+        let keywords = Constant.Keyword.allCases.map { $0.prefix() }.joined(separator: "|")
+        let pattern = "^[\(keywords)].*"
+        let result = WWRegularExpression.Method.extracts(text: rawString, pattern: pattern).calculate()
+        
+        switch result {
+        case .failure(_): return false
+        case .success(let array):
+            
+            guard let array = array,
+                  !array.isEmpty
+            else {
+                return false
+            }
+            
+            return true
+        }
+    }
+    
+    /// 解析事件文字 ("data: 文字\n\n" => 文字)
+    /// - Parameters:
+    ///   - rawString: 事件文字
+    ///   - keyword: Constant.Keyword
+    /// - Returns: Result<[String]?, Error>
+    func parseEventString(_ eventString: String, keyword: Constant.Keyword) -> Result<String?, Error> {
+        
+        let result = keyword.parseEventString(eventString)
+                
+        switch result {
+        case .failure(let error): return .failure(error)
+        case .success(let array):
+            
+            guard let array = array,
+                  let value = array.first
+            else {
+                return .success(nil)
+            }
+            
+            return .success(value)
+        }
     }
 }
