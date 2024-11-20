@@ -11,7 +11,7 @@ import WWRegularExpression
 // MARK: - Constant
 public extension WWEventSource.Constant {
     
-    typealias EventValue = (keyword: Keyword, value: String)    // (事件類型, 事件值)
+    typealias EventValue = (keyword: Keyword, value: String, rawValue: String)    // (事件類型, 事件值, 原始值)
     
     /// [SSE的連線狀態](https://www.ruanyifeng.com/blog/2017/05/server-sent_events.html)
     enum ConnectionStatus {

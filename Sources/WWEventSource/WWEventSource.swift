@@ -129,7 +129,7 @@ private extension WWEventSource {
             
             for keyword in Constant.Keyword.allCases {
                 guard let value = try? parseEventString(event, keyword: keyword).get() else { continue }
-                eventValues.append((keyword, value))
+                eventValues.append((keyword, value, event))
             }
         }
         
