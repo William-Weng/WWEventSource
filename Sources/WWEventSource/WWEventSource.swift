@@ -10,9 +10,7 @@ import WWRegularExpression
 
 // MARK: - WWEventSource
 open class WWEventSource: NSObject {
-    
-    open class Constant: NSObject {}
-    
+        
     public static let shared: WWEventSource = WWEventSource()
     
     private var session: URLSession?

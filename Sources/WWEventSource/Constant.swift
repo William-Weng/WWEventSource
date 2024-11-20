@@ -9,12 +9,12 @@ import UIKit
 import WWRegularExpression
 
 // MARK: - Constant
-public extension WWEventSource.Constant {
+open class Constant {
     
-    typealias EventValue = (keyword: Keyword, value: String, rawValue: String)    // (事件類型, 事件值, 原始值)
+    public typealias EventValue = (keyword: Keyword, value: String, rawValue: String)    // (事件類型, 事件值, 原始值)
     
     /// [SSE的連線狀態](https://www.ruanyifeng.com/blog/2017/05/server-sent_events.html)
-    enum ConnectionStatus {
+    public enum ConnectionStatus {
         
         case connecting
         case open
@@ -64,7 +64,7 @@ public extension WWEventSource.Constant {
     }
     
     /// 自訂錯誤
-    enum MyError: Error, LocalizedError {
+    public enum MyError: Error, LocalizedError {
         
         var errorDescription: String { errorMessage() }
 
@@ -83,7 +83,7 @@ public extension WWEventSource.Constant {
     }
     
     /// [HTTP 請求方法](https://developer.mozilla.org/zh-TW/docs/Web/HTTP/Methods)
-    enum HttpMethod: String {
+    public enum HttpMethod: String {
         case GET = "GET"
         case HEAD = "HEAD"
         case POST = "POST"
@@ -96,7 +96,7 @@ public extension WWEventSource.Constant {
     }
     
     /// HttpBody的類型 (Data)
-    enum HttpBobyType {
+    public enum HttpBobyType {
         
         case string(_ string: String?, encoding: String.Encoding = .utf8, isLossyConversion: Bool = false)
         case array(_ array: [Any]?, options: JSONSerialization.WritingOptions = JSONSerialization.WritingOptions())

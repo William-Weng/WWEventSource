@@ -1,30 +1,12 @@
 {
   "pins" : [
     {
-      "identity" : "wweventsource",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/William-Weng/WWEventSource",
-      "state" : {
-        "revision" : "684f1489caccd9c0466f3e0481c3cc46e5259583",
-        "version" : "1.2.0"
-      }
-    },
-    {
       "identity" : "wwprint",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/William-Weng/WWPrint",
       "state" : {
         "revision" : "8f5928f5d36624d77f8fc563fd8e31a59cfac6b6",
         "version" : "1.3.1"
-      }
-    },
-    {
-      "identity" : "wwregularexpression",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/William-Weng/WWRegularExpression",
-      "state" : {
-        "revision" : "5bc5c03259ed28b4c5c6899458fde6ac4d665794",
-        "version" : "1.0.1"
       }
     }
   ],

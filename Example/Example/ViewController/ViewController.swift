@@ -23,7 +23,7 @@ final class ViewController: UIViewController {
     }
     
     @IBAction func sseTest(_ sender: UIBarButtonItem) {
-        let dictionary: [String : Any] = ["content": "We’ve\n\n\n trained a model called ChatGPT which interacts in a conversational way. The dialogue format makes it possible for ChatGPT to answer followup questions, admit its mistakes, challenge incorrect premises, and reject inappropriate requests.", "delayTime": 0.05]
+        let dictionary: [String : Any] = ["content": "We’ve trained a model called ChatGPT which interacts in a conversational way. The dialogue format makes it possible for ChatGPT to answer followup questions, admit its mistakes, challenge incorrect premises, and reject inappropriate requests.", "delayTime": 0.05]
         tempMessage = ""
         _ = WWEventSource.shared.connect(httpMethod: .POST, delegate: self, urlString: urlString, httpBodyType: .dictionary(dictionary))
     }
@@ -32,7 +32,7 @@ final class ViewController: UIViewController {
 // MARK: - WWEventSourceDelegate
 extension ViewController: WWEventSourceDelegate {
         
-    func serverSentEventsConnectionStatus(_ eventSource: WWEventSource, result: Result<WWEventSource.Constant.ConnectionStatus, Error>) {
+    func serverSentEventsConnectionStatus(_ eventSource: WWEventSource, result: Result<Constant.ConnectionStatus, Error>) {
         wwPrint(result)
     }
     
@@ -40,7 +40,7 @@ extension ViewController: WWEventSourceDelegate {
         wwPrint(rawString)
     }
     
-    func serverSentEvents(_ eventSource: WWEventSource, eventValue: WWEventSource.Constant.EventValue) {
+    func serverSentEvents(_ eventSource: WWEventSource, eventValue: Constant.EventValue) {
         
         switch eventValue.keyword {
         case .id: wwPrint(eventValue)
