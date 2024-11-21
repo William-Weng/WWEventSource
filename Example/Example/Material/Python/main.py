@@ -16,12 +16,14 @@ def sse():
 def __event_stream__(content: str, delay_time: float):
 
     yield f'id: 3939889\n'
+    yield f'retry: 2500\n'
     yield f'event: open\n'
 
     for char in content:
         yield f"data: {char}\n\n"
         time.sleep(delay_time)
     
+    yield f'id: 28825252\n'
     yield f'event: done\n\n'
 
 if __name__ == '__main__':

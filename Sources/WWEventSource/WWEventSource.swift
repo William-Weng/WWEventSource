@@ -10,8 +10,11 @@ import WWRegularExpression
 
 // MARK: - WWEventSource
 open class WWEventSource: NSObject {
-        
+    
     public static let shared: WWEventSource = WWEventSource()
+    
+    public private(set) var lastEventId: Int?       // 紀錄最後的事件Id
+    public private(set) var lastRertyTime: Int?     // 紀錄最後的重試時間 (ms)
     
     private var session: URLSession?
     private var dataTask: URLSessionDataTask?
@@ -94,8 +97,10 @@ private extension WWEventSource {
             return .failure(Constant.MyError.notUrlFormat)
         }
         
+        lastEventId = nil
+        lastRertyTime = 3000
         self.delegate = delegate
-                
+        
         if let headers = headers {
             headers.forEach { key, value in if let value = value { request.addValue(value, forHTTPHeaderField: key) }}
         }
@@ -110,6 +115,7 @@ private extension WWEventSource {
         dataTask?.resume()
         
         self.delegate?.serverSentEventsConnectionStatus(self, result: .success(.connecting))
+        
         return .success(dataTask)
     }
     
@@ -126,7 +132,15 @@ private extension WWEventSource {
         parseEventArray(rawString: rawString).forEach { event in
             
             for keyword in Constant.Keyword.allCases {
+                
                 guard let value = try? parseEventString(event, keyword: keyword).get() else { continue }
+                                
+                switch keyword {
+                case .id: lastEventId = Int(value) ?? lastEventId
+                case .retry: lastRertyTime = Int(value) ?? lastRertyTime
+                case .event, .data: break
+                }
+                
                 eventValues.append((keyword, value, event))
             }
         }
@@ -145,7 +159,6 @@ private extension WWEventSource {
         rawString.components(separatedBy: "\n").forEach { string in
             
             let isMatche = matche(rawString: string)
-            
             if (isMatche) { eventArray.append("\(string)\n"); return }
             
             if (!_array.isEmpty) {

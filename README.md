@@ -14,6 +14,12 @@ dependencies: [
 ]
 ```
 
+### Parameters - 可用參數
+|參數|功能|
+|-|-|
+|lastEventId|紀錄最後的事件Id|
+|lastRertyTime|紀錄最後的重試時間 (ms)|
+
 ### Function - 可用函式
 |函式|功能|
 |-|-|

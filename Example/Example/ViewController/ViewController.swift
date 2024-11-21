@@ -31,7 +31,7 @@ final class ViewController: UIViewController {
 
 // MARK: - WWEventSourceDelegate
 extension ViewController: WWEventSourceDelegate {
-        
+    
     func serverSentEventsConnectionStatus(_ eventSource: WWEventSource, result: Result<Constant.ConnectionStatus, Error>) {
         wwPrint(result)
     }
