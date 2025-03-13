@@ -8,13 +8,13 @@
 import UIKit
 import WWRegularExpression
 
-// MARK: - Constant
-open class Constant {
+// MARK: - 常數
+public extension WWEventSource.Constant {
     
-    public typealias EventValue = (keyword: Keyword, value: String, rawValue: String)    // (事件類型, 事件值, 原始值)
+    typealias EventValue = (keyword: Keyword, value: String, rawValue: String)    // (事件類型, 事件值, 原始值)
     
     /// [SSE的連線狀態](https://www.ruanyifeng.com/blog/2017/05/server-sent_events.html)
-    public enum ConnectionStatus {
+    enum ConnectionStatus {
         
         case connecting
         case open
@@ -22,7 +22,7 @@ open class Constant {
     }
     
     /// SSE事件關鍵字
-    public enum Event {
+    enum Event {
         
         case id(_ keyword: Keyword, _ value: Int)
         case event(_ keyword: Keyword, _ value: String)
@@ -31,7 +31,7 @@ open class Constant {
     }
     
     /// SSE訊息關鍵字
-    public enum Keyword: CaseIterable {
+    enum Keyword: CaseIterable {
         
         case id     // id: <事件序號>\n
         case event  // event: <錯誤訊息>\n
@@ -64,7 +64,7 @@ open class Constant {
     }
     
     /// 自訂錯誤
-    public enum MyError: Error, LocalizedError {
+    enum MyError: Error, LocalizedError {
         
         var errorDescription: String { errorMessage() }
 
@@ -83,7 +83,7 @@ open class Constant {
     }
     
     /// [HTTP 請求方法](https://developer.mozilla.org/zh-TW/docs/Web/HTTP/Methods)
-    public enum HttpMethod: String {
+    enum HttpMethod: String {
         case GET = "GET"
         case HEAD = "HEAD"
         case POST = "POST"
@@ -96,7 +96,7 @@ open class Constant {
     }
     
     /// HttpBody的類型 (Data)
-    public enum HttpBobyType {
+    enum HttpBobyType {
         
         case string(_ string: String?, encoding: String.Encoding = .utf8, isLossyConversion: Bool = false)
         case array(_ array: [Any]?, options: JSONSerialization.WritingOptions = JSONSerialization.WritingOptions())

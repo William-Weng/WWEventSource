@@ -7,7 +7,6 @@
 //
 
 import UIKit
-import WWPrint
 import WWEventSource
 
 // MARK: - ViewController
@@ -32,21 +31,21 @@ final class ViewController: UIViewController {
 // MARK: - WWEventSourceDelegate
 extension ViewController: WWEventSourceDelegate {
     
-    func serverSentEventsConnectionStatus(_ eventSource: WWEventSource, result: Result<Constant.ConnectionStatus, Error>) {
-        wwPrint(result)
+    func serverSentEventsConnectionStatus(_ eventSource: WWEventSource, result: Result<WWEventSource.Constant.ConnectionStatus, Error>) {
+        print(result)
     }
     
     func serverSentEvents(_ eventSource: WWEventSource, rawString: String) {
-        wwPrint(rawString)
+        print(rawString)
     }
     
-    func serverSentEvents(_ eventSource: WWEventSource, eventValue: Constant.EventValue) {
+    func serverSentEvents(_ eventSource: WWEventSource, eventValue: WWEventSource.Constant.EventValue) {
         
         switch eventValue.keyword {
-        case .id: wwPrint(eventValue)
-        case .event: wwPrint(eventValue)
-        case .retry: wwPrint(eventValue)
-        case .data: wwPrint(eventValue)
+        case .id: print(eventValue)
+        case .event: print(eventValue)
+        case .retry: print(eventValue)
+        case .data: print(eventValue)
             tempMessage += eventValue.value
             DispatchQueue.main.async { self.eventStringLabel.text = self.tempMessage }
         }

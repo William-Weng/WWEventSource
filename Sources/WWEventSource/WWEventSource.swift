@@ -11,6 +11,8 @@ import WWRegularExpression
 // MARK: - WWEventSource
 open class WWEventSource: NSObject {
     
+    public class Constant {}
+    
     public static let shared: WWEventSource = WWEventSource()
     
     public private(set) var lastEventId: Int?       // 紀錄最後的事件Id
@@ -42,7 +44,7 @@ public extension WWEventSource {
     ///   - configuration: URLSessionConfiguration
     ///   - queue: OperationQueue?
     /// - Returns: Result<URLSessionDataTask?, Error>
-    func connect(httpMethod: Constant.HttpMethod = .GET, delegate: WWEventSourceDelegate?, urlString: String, parameters: [String: String?]? = nil, headers: [String: String?]? = nil, httpBodyType: Constant.HttpBobyType? = nil, configuration: URLSessionConfiguration = .default, queue: OperationQueue? = nil) -> Result<URLSessionDataTask?, Error> {
+    func connect(httpMethod: WWEventSource.Constant.HttpMethod = .GET, delegate: WWEventSourceDelegate?, urlString: String, parameters: [String: String?]? = nil, headers: [String: String?]? = nil, httpBodyType: WWEventSource.Constant.HttpBobyType? = nil, configuration: URLSessionConfiguration = .default, queue: OperationQueue? = nil) -> Result<URLSessionDataTask?, Error> {
         return connect(httpMethod: httpMethod, delegate: delegate, urlString: urlString, queryItems: parameters?._queryItems(), headers: headers, httpBodyType: httpBodyType, configuration: configuration, queue: queue)
     }
     
@@ -88,7 +90,7 @@ private extension WWEventSource {
     ///   - configuration: URLSessionConfiguration
     ///   - queue: OperationQueue?
     /// - Returns: Result<URLSessionDataTask?, Error>
-    func connect(httpMethod: Constant.HttpMethod, delegate: WWEventSourceDelegate?, urlString: String, queryItems: [URLQueryItem]?, headers: [String: String?]?, httpBodyType: Constant.HttpBobyType?, configuration: URLSessionConfiguration, queue: OperationQueue?) -> Result<URLSessionDataTask?, Error> {
+    func connect(httpMethod: Constant.HttpMethod, delegate: WWEventSourceDelegate?, urlString: String, queryItems: [URLQueryItem]?, headers: [String: String?]?, httpBodyType: WWEventSource.Constant.HttpBobyType?, configuration: URLSessionConfiguration, queue: OperationQueue?) -> Result<URLSessionDataTask?, Error> {
         
         guard let urlComponents = URLComponents._build(urlString: urlString, queryItems: queryItems),
               let queryedURL = urlComponents.url,
