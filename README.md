@@ -10,7 +10,7 @@
 ### [Installation with Swift Package Manager](https://medium.com/彼得潘的-swift-ios-app-開發問題解答集/使用-spm-安裝第三方套件-xcode-11-新功能-2c4ffcf85b4b)
 ```bash
 dependencies: [
-    .package(url: "https://github.com/William-Weng/WWEventSource.git", .upToNextMajor(from: "1.2.4"))
+    .package(url: "https://github.com/William-Weng/WWEventSource.git", .upToNextMajor(from: "1.3.0"))
 ]
 ```
 
@@ -26,7 +26,7 @@ dependencies: [
 |connect(httpMethod:delegate:urlString:parameters:headers:httpBodyType:configuration:queue:)|開啟SSE連線|
 |disconnect()|關閉SSE連線|
 
-### WWEventSourceDelegate
+### [WWEventSource.Delegate](https://ezgif.com/video-to-webp)
 |函式|功能|
 |-|-|
 |serverSentEventsConnectionStatus(_:result:)|接收連線的狀態|
@@ -36,20 +36,14 @@ dependencies: [
 ### Example
 ```swift
 import UIKit
-import WWPrint
 import WWEventSource
 
-// MARK: - ViewController
 final class ViewController: UIViewController {
 
     @IBOutlet weak var eventStringLabel: UILabel!
     
     private let urlString = "http://localhost:54321/sse"
     private var tempMessage = ""
-    
-    override func viewDidLoad() {
-        super.viewDidLoad()
-    }
     
     @IBAction func sseTest(_ sender: UIBarButtonItem) {
         let dictionary: [String : Any] = ["content": "We’ve trained a model called ChatGPT which interacts in a conversational way. The dialogue format makes it possible for ChatGPT to answer followup questions, admit its mistakes, challenge incorrect premises, and reject inappropriate requests.", "delayTime": 0.05]
@@ -58,24 +52,23 @@ final class ViewController: UIViewController {
     }
 }
 
-// MARK: - WWEventSourceDelegate
-extension ViewController: WWEventSourceDelegate {
-        
-    func serverSentEventsConnectionStatus(_ eventSource: WWEventSource, result: Result<WWEventSource.Constant.ConnectionStatus, Error>) {
-        wwPrint(result)
+extension ViewController: WWEventSource.Delegate {
+    
+    func serverSentEventsConnectionStatus(_ eventSource: WWEventSource, result: Result<WWEventSource.ConnectionStatus, Error>) {
+        print(result)
     }
     
     func serverSentEvents(_ eventSource: WWEventSource, rawString: String) {
-        wwPrint(rawString)
+        print(rawString)
     }
     
-    func serverSentEvents(_ eventSource: WWEventSource, eventValue: WWEventSource.Constant.EventValue) {
+    func serverSentEvents(_ eventSource: WWEventSource, eventValue: WWEventSource.EventValue) {
         
         switch eventValue.keyword {
-        case .id: wwPrint(eventValue)
-        case .event: wwPrint(eventValue)
-        case .retry: wwPrint(eventValue)
-        case .data: wwPrint(eventValue)
+        case .id: print(eventValue)
+        case .event: print(eventValue)
+        case .retry: print(eventValue)
+        case .data: print(eventValue)
             tempMessage += eventValue.value
             DispatchQueue.main.async { self.eventStringLabel.text = self.tempMessage }
         }

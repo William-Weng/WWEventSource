@@ -96,7 +96,7 @@ extension URLRequest {
     /// - Parameters:
     ///   - url: URL網址
     ///   - httpMethod: HTTP方法 (GET / POST / ...)
-    static func _build(url: URL, httpMethod: WWEventSource.Constant.HttpMethod? = nil) -> URLRequest {
+    static func _build(url: URL, httpMethod: WWEventSource.HttpMethod? = nil) -> URLRequest {
         return Self._build(url: url, httpMethod: httpMethod?.rawValue)
     }
     

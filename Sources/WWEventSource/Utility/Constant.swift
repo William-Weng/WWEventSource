@@ -9,7 +9,7 @@ import UIKit
 import WWRegularExpression
 
 // MARK: - 常數
-public extension WWEventSource.Constant {
+public extension WWEventSource {
     
     typealias EventValue = (keyword: Keyword, value: String, rawValue: String)    // (事件類型, 事件值, 原始值)
     

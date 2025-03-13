@@ -17,10 +17,6 @@ final class ViewController: UIViewController {
     private let urlString = "http://localhost:54321/sse"
     private var tempMessage = ""
     
-    override func viewDidLoad() {
-        super.viewDidLoad()
-    }
-    
     @IBAction func sseTest(_ sender: UIBarButtonItem) {
         let dictionary: [String : Any] = ["content": "We’ve trained a model called ChatGPT which interacts in a conversational way. The dialogue format makes it possible for ChatGPT to answer followup questions, admit its mistakes, challenge incorrect premises, and reject inappropriate requests.", "delayTime": 0.05]
         tempMessage = ""
@@ -29,9 +25,9 @@ final class ViewController: UIViewController {
 }
 
 // MARK: - WWEventSourceDelegate
-extension ViewController: WWEventSourceDelegate {
+extension ViewController: WWEventSource.Delegate {
     
-    func serverSentEventsConnectionStatus(_ eventSource: WWEventSource, result: Result<WWEventSource.Constant.ConnectionStatus, Error>) {
+    func serverSentEventsConnectionStatus(_ eventSource: WWEventSource, result: Result<WWEventSource.ConnectionStatus, Error>) {
         print(result)
     }
     
@@ -39,7 +35,7 @@ extension ViewController: WWEventSourceDelegate {
         print(rawString)
     }
     
-    func serverSentEvents(_ eventSource: WWEventSource, eventValue: WWEventSource.Constant.EventValue) {
+    func serverSentEvents(_ eventSource: WWEventSource, eventValue: WWEventSource.EventValue) {
         
         switch eventValue.keyword {
         case .id: print(eventValue)

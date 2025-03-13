@@ -10,9 +10,7 @@ import WWRegularExpression
 
 // MARK: - WWEventSource
 open class WWEventSource: NSObject {
-    
-    public class Constant {}
-    
+        
     public static let shared: WWEventSource = WWEventSource()
     
     public private(set) var lastEventId: Int?       // 紀錄最後的事件Id
@@ -22,7 +20,7 @@ open class WWEventSource: NSObject {
     private var dataTask: URLSessionDataTask?
     private var receivedData = Data()
     
-    public weak var delegate: WWEventSourceDelegate?
+    public weak var delegate: Delegate?
     
     deinit {
         delegate = nil
@@ -44,7 +42,7 @@ public extension WWEventSource {
     ///   - configuration: URLSessionConfiguration
     ///   - queue: OperationQueue?
     /// - Returns: Result<URLSessionDataTask?, Error>
-    func connect(httpMethod: WWEventSource.Constant.HttpMethod = .GET, delegate: WWEventSourceDelegate?, urlString: String, parameters: [String: String?]? = nil, headers: [String: String?]? = nil, httpBodyType: WWEventSource.Constant.HttpBobyType? = nil, configuration: URLSessionConfiguration = .default, queue: OperationQueue? = nil) -> Result<URLSessionDataTask?, Error> {
+    func connect(httpMethod: WWEventSource.HttpMethod = .GET, delegate: Delegate?, urlString: String, parameters: [String: String?]? = nil, headers: [String: String?]? = nil, httpBodyType: WWEventSource.HttpBobyType? = nil, configuration: URLSessionConfiguration = .default, queue: OperationQueue? = nil) -> Result<URLSessionDataTask?, Error> {
         return connect(httpMethod: httpMethod, delegate: delegate, urlString: urlString, queryItems: parameters?._queryItems(), headers: headers, httpBodyType: httpBodyType, configuration: configuration, queue: queue)
     }
     
@@ -90,13 +88,13 @@ private extension WWEventSource {
     ///   - configuration: URLSessionConfiguration
     ///   - queue: OperationQueue?
     /// - Returns: Result<URLSessionDataTask?, Error>
-    func connect(httpMethod: Constant.HttpMethod, delegate: WWEventSourceDelegate?, urlString: String, queryItems: [URLQueryItem]?, headers: [String: String?]?, httpBodyType: WWEventSource.Constant.HttpBobyType?, configuration: URLSessionConfiguration, queue: OperationQueue?) -> Result<URLSessionDataTask?, Error> {
+    func connect(httpMethod: HttpMethod, delegate: Delegate?, urlString: String, queryItems: [URLQueryItem]?, headers: [String: String?]?, httpBodyType: WWEventSource.HttpBobyType?, configuration: URLSessionConfiguration, queue: OperationQueue?) -> Result<URLSessionDataTask?, Error> {
         
         guard let urlComponents = URLComponents._build(urlString: urlString, queryItems: queryItems),
               let queryedURL = urlComponents.url,
               var request = Optional.some(URLRequest._build(url: queryedURL, httpMethod: httpMethod))
         else {
-            return .failure(Constant.MyError.notUrlFormat)
+            return .failure(MyError.notUrlFormat)
         }
         
         lastEventId = nil
@@ -127,13 +125,13 @@ private extension WWEventSource {
         
         guard let rawString = String(data: receivedData, encoding: .utf8) else { return }
         
-        var eventValues: [Constant.EventValue] = []
+        var eventValues: [EventValue] = []
         
         delegate?.serverSentEvents(self, rawString: rawString)
         
         parseEventArray(rawString: rawString).forEach { event in
             
-            for keyword in Constant.Keyword.allCases {
+            for keyword in Keyword.allCases {
                 
                 guard let value = try? parseEventString(event, keyword: keyword).get() else { continue }
                                 
@@ -186,7 +184,7 @@ private extension WWEventSource {
     /// - Returns: Bool
     func matche(rawString: String) -> Bool {
         
-        let keywords = Constant.Keyword.allCases.map { $0.prefix() }.joined(separator: "|")
+        let keywords = Keyword.allCases.map { $0.prefix() }.joined(separator: "|")
         let pattern = "^[\(keywords)].*"
         let result = WWRegularExpression.Method.extracts(text: rawString, pattern: pattern).calculate()
         
@@ -209,7 +207,7 @@ private extension WWEventSource {
     ///   - rawString: 事件文字
     ///   - keyword: Constant.Keyword
     /// - Returns: Result<[String]?, Error>
-    func parseEventString(_ eventString: String, keyword: Constant.Keyword) -> Result<String?, Error> {
+    func parseEventString(_ eventString: String, keyword: Keyword) -> Result<String?, Error> {
         
         let result = keyword.parseEventString(eventString)
                 
