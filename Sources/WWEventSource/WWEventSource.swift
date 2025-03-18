@@ -36,14 +36,15 @@ public extension WWEventSource {
     ///   - httpMethod: [Http方法](https://developer.mozilla.org/en-US/docs/Web/API/EventSource)
     ///   - delegate: [WWEventSourceDelegate?](https://apifox.com/apiskills/sse-vs-websocket/)
     ///   - urlString: [String](https://ithelp.ithome.com.tw/articles/10230335)
+    ///   - contentType: [ContentType](https://www.runoob.com/http/http-content-type.html)
     ///   - parameters: [[String: String?]?](https://github.com/hamin/EventSource.Swift/blob/master/lib/SwiftEventSource.swift)
     ///   - headers: [[String: String?]?](https://blog.gtwang.org/web-development/stream-updates-with-server-sent-events/)
     ///   - httpBodyType: Constant.HttpBobyType?
     ///   - configuration: URLSessionConfiguration
     ///   - queue: OperationQueue?
     /// - Returns: Result<URLSessionDataTask?, Error>
-    func connect(httpMethod: WWEventSource.HttpMethod = .GET, delegate: Delegate?, urlString: String, parameters: [String: String?]? = nil, headers: [String: String?]? = nil, httpBodyType: WWEventSource.HttpBobyType? = nil, configuration: URLSessionConfiguration = .default, queue: OperationQueue? = nil) -> Result<URLSessionDataTask?, Error> {
-        return connect(httpMethod: httpMethod, delegate: delegate, urlString: urlString, queryItems: parameters?._queryItems(), headers: headers, httpBodyType: httpBodyType, configuration: configuration, queue: queue)
+    func connect(httpMethod: WWEventSource.HttpMethod = .GET, delegate: Delegate?, urlString: String, contentType: ContentType = .json, parameters: [String: String?]? = nil, headers: [String: String?]? = nil, httpBodyType: WWEventSource.HttpBobyType? = nil, configuration: URLSessionConfiguration = .default, queue: OperationQueue? = nil) -> Result<URLSessionDataTask?, Error> {
+        return connect(httpMethod: httpMethod, delegate: delegate, urlString: urlString, contentType: contentType, queryItems: parameters?._queryItems(), headers: headers, httpBodyType: httpBodyType, configuration: configuration, queue: queue)
     }
     
     /// [關閉SSE連線](https://blackbing.medium.com/淺談-server-sent-events-9c81ef21ca8e)
@@ -82,13 +83,14 @@ private extension WWEventSource {
     ///   - httpMethod: Constant.HttpMethod
     ///   - delegate: WWEventSourceDelegate?
     ///   - urlString: String
+    ///   - contentType: ContentType
     ///   - queryItems: [URLQueryItem]?
     ///   - headers: [String: String?]?
     ///   - httpBodyType: Constant.HttpBobyType?
     ///   - configuration: URLSessionConfiguration
     ///   - queue: OperationQueue?
     /// - Returns: Result<URLSessionDataTask?, Error>
-    func connect(httpMethod: HttpMethod, delegate: Delegate?, urlString: String, queryItems: [URLQueryItem]?, headers: [String: String?]?, httpBodyType: WWEventSource.HttpBobyType?, configuration: URLSessionConfiguration, queue: OperationQueue?) -> Result<URLSessionDataTask?, Error> {
+    func connect(httpMethod: HttpMethod, delegate: Delegate?, urlString: String, contentType: ContentType, queryItems: [URLQueryItem]?, headers: [String: String?]?, httpBodyType: WWEventSource.HttpBobyType?, configuration: URLSessionConfiguration, queue: OperationQueue?) -> Result<URLSessionDataTask?, Error> {
         
         guard let urlComponents = URLComponents._build(urlString: urlString, queryItems: queryItems),
               let queryedURL = urlComponents.url,
@@ -101,14 +103,12 @@ private extension WWEventSource {
         lastRertyTime = 3000
         self.delegate = delegate
         
-        if let headers = headers {
-            headers.forEach { key, value in if let value = value { request.addValue(value, forHTTPHeaderField: key) }}
-        }
-        
         request.httpBody = httpBodyType?.data()
-        request.addValue("application/json", forHTTPHeaderField: "Content-Type")
+        request.addValue("\(contentType)", forHTTPHeaderField: "Content-Type")
         request.addValue("text/event-stream", forHTTPHeaderField: "Accept")
-
+        
+        if let headers { headers.forEach { key, value in if let value = value { request.addValue(value, forHTTPHeaderField: key) }}}
+        
         session = URLSession(configuration: configuration, delegate: self, delegateQueue: queue)
         
         dataTask = session?.dataTask(with: request)
