@@ -12,6 +12,8 @@
 		81431F0C2CEEDFFA002DD294 /* WWEventSource in Frameworks */ = {isa = PBXBuildFile; productRef = 81431F0B2CEEDFFA002DD294 /* WWEventSource */; };
 		815041F22CE6E1C600735DEC /* WWEventSource in Frameworks */ = {isa = PBXBuildFile; productRef = 815041F12CE6E1C600735DEC /* WWEventSource */; };
 		815F2A0E2CE72E7100E85459 /* WWEventSource in Frameworks */ = {isa = PBXBuildFile; productRef = 815F2A0D2CE72E7100E85459 /* WWEventSource */; };
+		8166C8662D8BF19000AB785A /* WWEventSource in Frameworks */ = {isa = PBXBuildFile; productRef = 8166C8652D8BF19000AB785A /* WWEventSource */; };
+		8166C8692D8BF7CA00AB785A /* WWEventSource in Frameworks */ = {isa = PBXBuildFile; productRef = 8166C8682D8BF7CA00AB785A /* WWEventSource */; };
 		817567FC2CA2C2B400B24577 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 817567FB2CA2C2B400B24577 /* AppDelegate.swift */; };
 		817568002CA2C2B400B24577 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 817567FF2CA2C2B400B24577 /* ViewController.swift */; };
 		817568032CA2C2B400B24577 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 817568012CA2C2B400B24577 /* Main.storyboard */; };
@@ -21,7 +23,6 @@
 		8199D0F12D82AADB003B96B1 /* WWEventSource in Frameworks */ = {isa = PBXBuildFile; productRef = 8199D0F02D82AADB003B96B1 /* WWEventSource */; };
 		81A84E172CED727800407A62 /* WWEventSource in Frameworks */ = {isa = PBXBuildFile; productRef = 81A84E162CED727800407A62 /* WWEventSource */; };
 		81BF3CF82D89601800A11987 /* WWEventSource in Frameworks */ = {isa = PBXBuildFile; productRef = 81BF3CF72D89601800A11987 /* WWEventSource */; };
-		81BF3D012D8964D100A11987 /* WWEventSource in Frameworks */ = {isa = PBXBuildFile; productRef = 81BF3D002D8964D100A11987 /* WWEventSource */; };
 		81D1C52C2CEC359F001F4B9A /* WWEventSource in Frameworks */ = {isa = PBXBuildFile; productRef = 81D1C52B2CEC359F001F4B9A /* WWEventSource */; };
 		81D1C5322CEC76C9001F4B9A /* WWEventSource in Frameworks */ = {isa = PBXBuildFile; productRef = 81D1C5312CEC76C9001F4B9A /* WWEventSource */; };
 		81F77E942CDDEBAD0029F0BC /* main.py in Resources */ = {isa = PBXBuildFile; fileRef = 81F77E932CDDEBAD0029F0BC /* main.py */; };
@@ -45,8 +46,9 @@
 			files = (
 				815041F22CE6E1C600735DEC /* WWEventSource in Frameworks */,
 				81A84E172CED727800407A62 /* WWEventSource in Frameworks */,
-				81BF3D012D8964D100A11987 /* WWEventSource in Frameworks */,
+				8166C8662D8BF19000AB785A /* WWEventSource in Frameworks */,
 				817772D22CED75A600E0BB7A /* WWEventSource in Frameworks */,
+				8166C8692D8BF7CA00AB785A /* WWEventSource in Frameworks */,
 				8199D0F12D82AADB003B96B1 /* WWEventSource in Frameworks */,
 				811E57EE2D82BC8200299E26 /* WWEventSource in Frameworks */,
 				81D1C52C2CEC359F001F4B9A /* WWEventSource in Frameworks */,
@@ -167,7 +169,8 @@
 				8199D0F02D82AADB003B96B1 /* WWEventSource */,
 				811E57ED2D82BC8200299E26 /* WWEventSource */,
 				81BF3CF72D89601800A11987 /* WWEventSource */,
-				81BF3D002D8964D100A11987 /* WWEventSource */,
+				8166C8652D8BF19000AB785A /* WWEventSource */,
+				8166C8682D8BF7CA00AB785A /* WWEventSource */,
 			);
 			productName = Example;
 			productReference = 817567F82CA2C2B400B24577 /* Example.app */;
@@ -198,7 +201,7 @@
 			);
 			mainGroup = 817567EF2CA2C2B400B24577;
 			packageReferences = (
-				81BF3CFF2D8964D100A11987 /* XCRemoteSwiftPackageReference "WWEventSource" */,
+				8166C8672D8BF7CA00AB785A /* XCRemoteSwiftPackageReference "WWEventSource" */,
 			);
 			productRefGroup = 817567F92CA2C2B400B24577 /* Products */;
 			projectDirPath = "";
@@ -464,12 +467,12 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
-		81BF3CFF2D8964D100A11987 /* XCRemoteSwiftPackageReference "WWEventSource" */ = {
+		8166C8672D8BF7CA00AB785A /* XCRemoteSwiftPackageReference "WWEventSource" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/William-Weng/WWEventSource";
 			requirement = {
 				kind = upToNextMajorVersion;
-				minimumVersion = 1.3.1;
+				minimumVersion = 1.3.2;
 			};
 		};
 /* End XCRemoteSwiftPackageReference section */
@@ -495,6 +498,15 @@
 			isa = XCSwiftPackageProductDependency;
 			productName = WWEventSource;
 		};
+		8166C8652D8BF19000AB785A /* WWEventSource */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = WWEventSource;
+		};
+		8166C8682D8BF7CA00AB785A /* WWEventSource */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 8166C8672D8BF7CA00AB785A /* XCRemoteSwiftPackageReference "WWEventSource" */;
+			productName = WWEventSource;
+		};
 		817772D12CED75A600E0BB7A /* WWEventSource */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = WWEventSource;
@@ -509,11 +521,6 @@
 		};
 		81BF3CF72D89601800A11987 /* WWEventSource */ = {
 			isa = XCSwiftPackageProductDependency;
-			productName = WWEventSource;
-		};
-		81BF3D002D8964D100A11987 /* WWEventSource */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 81BF3CFF2D8964D100A11987 /* XCRemoteSwiftPackageReference "WWEventSource" */;
 			productName = WWEventSource;
 		};
 		81D1C52B2CEC359F001F4B9A /* WWEventSource */ = {

@@ -31,8 +31,12 @@ extension ViewController: WWEventSource.Delegate {
         print(result)
     }
     
-    func serverSentEvents(_ eventSource: WWEventSource, rawString: String) {
-        print(rawString)
+    func serverSentEventsRawString(_ eventSource: WWEventSource, result: Result<String, Error>) {
+        
+        switch result {
+        case .failure(let error): print(error)
+        case .success(let rawString): print(rawString)
+        }
     }
     
     func serverSentEvents(_ eventSource: WWEventSource, eventValue: WWEventSource.EventValue) {

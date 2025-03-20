@@ -10,7 +10,7 @@
 ### [Installation with Swift Package Manager](https://medium.com/彼得潘的-swift-ios-app-開發問題解答集/使用-spm-安裝第三方套件-xcode-11-新功能-2c4ffcf85b4b)
 ```bash
 dependencies: [
-    .package(url: "https://github.com/William-Weng/WWEventSource.git", .upToNextMajor(from: "1.3.1"))
+    .package(url: "https://github.com/William-Weng/WWEventSource.git", .upToNextMajor(from: "1.3.2"))
 ]
 ```
 
@@ -23,14 +23,14 @@ dependencies: [
 ### Function - 可用函式
 |函式|功能|
 |-|-|
-|connect(httpMethod:delegate:urlString:parameters:headers:httpBodyType:configuration:queue:)|開啟SSE連線|
+|connect(httpMethod:delegate:urlString:contentType:using:parameters:headers:httpBodyType:configuration:queue:)|開啟SSE連線|
 |disconnect()|關閉SSE連線|
 
 ### [WWEventSource.Delegate](https://ezgif.com/video-to-webp)
 |函式|功能|
 |-|-|
 |serverSentEventsConnectionStatus(_:result:)|接收連線的狀態|
-|serverSentEvents(_:rawString:)|接收從Server端傳來的原始訊息|
+|serverSentEventsRawString(_:result:)|接收從Server端傳來的原始訊息|
 |serverSentEvents(_:eventValue:)|接收從Server端傳來的事件訊息|
 
 ### Example
@@ -58,8 +58,12 @@ extension ViewController: WWEventSource.Delegate {
         print(result)
     }
     
-    func serverSentEvents(_ eventSource: WWEventSource, rawString: String) {
-        print(rawString)
+    func serverSentEventsRawString(_ eventSource: WWEventSource, result: Result<String, Error>) {
+        
+        switch result {
+        case .failure(let error): print(error)
+        case .success(let rawString): print(rawString)
+        }
     }
     
     func serverSentEvents(_ eventSource: WWEventSource, eventValue: WWEventSource.EventValue) {

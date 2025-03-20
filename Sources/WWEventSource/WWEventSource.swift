@@ -16,6 +16,7 @@ open class WWEventSource: NSObject {
     public private(set) var lastEventId: Int?       // 紀錄最後的事件Id
     public private(set) var lastRertyTime: Int?     // 紀錄最後的重試時間 (ms)
     
+    private var encoding: String.Encoding = .utf8
     private var session: URLSession?
     private var dataTask: URLSessionDataTask?
     private var receivedData = Data()
@@ -37,38 +38,40 @@ public extension WWEventSource {
     ///   - delegate: [WWEventSourceDelegate?](https://apifox.com/apiskills/sse-vs-websocket/)
     ///   - urlString: [String](https://ithelp.ithome.com.tw/articles/10230335)
     ///   - contentType: [ContentType](https://www.runoob.com/http/http-content-type.html)
+    ///   - encoding: [String.Encoding](https://www.w3schools.com/html/html_charset.asp)
     ///   - parameters: [[String: String?]?](https://github.com/hamin/EventSource.Swift/blob/master/lib/SwiftEventSource.swift)
     ///   - headers: [[String: String?]?](https://blog.gtwang.org/web-development/stream-updates-with-server-sent-events/)
     ///   - httpBodyType: Constant.HttpBobyType?
     ///   - configuration: URLSessionConfiguration
     ///   - queue: OperationQueue?
     /// - Returns: Result<URLSessionDataTask?, Error>
-    func connect(httpMethod: WWEventSource.HttpMethod = .GET, delegate: Delegate?, urlString: String, contentType: ContentType = .json, parameters: [String: String?]? = nil, headers: [String: String?]? = nil, httpBodyType: WWEventSource.HttpBobyType? = nil, configuration: URLSessionConfiguration = .default, queue: OperationQueue? = nil) -> Result<URLSessionDataTask?, Error> {
-        return connect(httpMethod: httpMethod, delegate: delegate, urlString: urlString, contentType: contentType, queryItems: parameters?._queryItems(), headers: headers, httpBodyType: httpBodyType, configuration: configuration, queue: queue)
+    func connect(httpMethod: WWEventSource.HttpMethod = .GET, delegate: Delegate?, urlString: String, contentType: ContentType = .json, using encoding: String.Encoding = .utf8, parameters: [String: String?]? = nil, headers: [String: String?]? = nil, httpBodyType: WWEventSource.HttpBobyType? = nil, configuration: URLSessionConfiguration = .default, queue: OperationQueue? = nil) -> Result<URLSessionDataTask?, Error> {
+        return connect(httpMethod: httpMethod, delegate: delegate, urlString: urlString, contentType: contentType, encoding: encoding, queryItems: parameters?._queryItems(), headers: headers, httpBodyType: httpBodyType, configuration: configuration, queue: queue)
     }
     
     /// [關閉SSE連線](https://blackbing.medium.com/淺談-server-sent-events-9c81ef21ca8e)
     func disconnect() {
-        self.delegate?.serverSentEventsConnectionStatus(self, result: .success(.closed))
         delegate = nil
         dataTask?.cancel()
         session?.invalidateAndCancel()
+        self.delegate?.serverSentEventsConnectionStatus(self, result: .success(.closed))
     }
 }
 
 // MARK: - URLSessionDataDelegate
-extension WWEventSource: URLSessionDataDelegate {
+extension WWEventSource: URLSessionDataDelegate {}
+public extension WWEventSource {
     
-    public func urlSession(_ session: URLSession, dataTask: URLSessionDataTask, didReceive data: Data) {
+    func urlSession(_ session: URLSession, dataTask: URLSessionDataTask, didReceive data: Data) {
         
         defer { receivedData.removeAll() }
         
         delegate?.serverSentEventsConnectionStatus(self, result: .success(.open))
         receivedData.append(data)
-        parseEvents(with: receivedData)
+        parseEvents(with: receivedData, encoding: encoding)
     }
     
-    public func urlSession(_ session: URLSession, task: URLSessionTask, didCompleteWithError error: Error?) {
+    func urlSession(_ session: URLSession, task: URLSessionTask, didCompleteWithError error: Error?) {
         
         if let error = error { self.delegate?.serverSentEventsConnectionStatus(self, result: .failure(error)); return }
         self.delegate?.serverSentEventsConnectionStatus(self, result: .success(.closed))
@@ -84,24 +87,26 @@ private extension WWEventSource {
     ///   - delegate: WWEventSourceDelegate?
     ///   - urlString: String
     ///   - contentType: ContentType
+    ///   - encoding: String.Encoding
     ///   - queryItems: [URLQueryItem]?
     ///   - headers: [String: String?]?
     ///   - httpBodyType: Constant.HttpBobyType?
     ///   - configuration: URLSessionConfiguration
     ///   - queue: OperationQueue?
     /// - Returns: Result<URLSessionDataTask?, Error>
-    func connect(httpMethod: HttpMethod, delegate: Delegate?, urlString: String, contentType: ContentType, queryItems: [URLQueryItem]?, headers: [String: String?]?, httpBodyType: WWEventSource.HttpBobyType?, configuration: URLSessionConfiguration, queue: OperationQueue?) -> Result<URLSessionDataTask?, Error> {
+    func connect(httpMethod: HttpMethod, delegate: Delegate?, urlString: String, contentType: ContentType, encoding: String.Encoding, queryItems: [URLQueryItem]?, headers: [String: String?]?, httpBodyType: WWEventSource.HttpBobyType?, configuration: URLSessionConfiguration, queue: OperationQueue?) -> Result<URLSessionDataTask?, Error> {
         
         guard let urlComponents = URLComponents._build(urlString: urlString, queryItems: queryItems),
               let queryedURL = urlComponents.url,
               var request = Optional.some(URLRequest._build(url: queryedURL, httpMethod: httpMethod))
         else {
-            return .failure(MyError.notUrlFormat)
+            return .failure(CustomError.notUrlFormat)
         }
         
         lastEventId = nil
         lastRertyTime = 3000
         self.delegate = delegate
+        self.encoding = encoding
         
         request.httpBody = httpBodyType?.data()
         request.addValue("\(contentType)", forHTTPHeaderField: "Content-Type")
@@ -120,14 +125,16 @@ private extension WWEventSource {
     }
     
     /// 解析傳來的事件值
-    /// - Parameter receivedData: Data
-    func parseEvents(with receivedData: Data) {
+    /// - Parameters:
+    ///   - receivedData: 原始資料
+    ///   - encoding: 字元編碼
+    func parseEvents(with receivedData: Data, encoding: String.Encoding) {
         
-        guard let rawString = String(data: receivedData, encoding: .utf8) else { return }
+        guard let rawString = String(data: receivedData, encoding: encoding) else { delegate?.serverSentEventsRawString(self, result: .failure(CustomError.notEncoding)); return }
         
         var eventValues: [EventValue] = []
         
-        delegate?.serverSentEvents(self, rawString: rawString)
+        delegate?.serverSentEventsRawString(self, result: .success(rawString))
         
         parseEventArray(rawString: rawString).forEach { event in
             

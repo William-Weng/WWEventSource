@@ -8,11 +8,15 @@
 import UIKit
 import WWRegularExpression
 
-// MARK: - 常數
+// MARK: - typealias
 public extension WWEventSource {
     
     typealias EventValue = (keyword: Keyword, value: String, rawValue: String)    // (事件類型, 事件值, 原始值)
-    
+}
+
+// MARK: - 常數
+public extension WWEventSource {
+        
     /// [SSE的連線狀態](https://www.ruanyifeng.com/blog/2017/05/server-sent_events.html)
     enum ConnectionStatus {
         
@@ -64,19 +68,19 @@ public extension WWEventSource {
     }
     
     /// 自訂錯誤
-    enum MyError: Error, LocalizedError {
+    enum CustomError: Error, LocalizedError {
         
         var errorDescription: String { errorMessage() }
 
-        case unknown
+        case notEncoding
         case notUrlFormat
         
         /// 顯示錯誤說明
         /// - Returns: String
         private func errorMessage() -> String {
-
+            
             switch self {
-            case .unknown: return "未知錯誤"
+            case .notEncoding: return "文字編碼格式錯誤"
             case .notUrlFormat: return "URL格式錯誤"
             }
         }
