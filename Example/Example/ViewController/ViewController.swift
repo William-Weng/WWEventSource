@@ -4,7 +4,6 @@
 //
 //  Created by William.Weng on 2024/11/8.
 //
-//
 
 import UIKit
 import WWEventSource
@@ -27,15 +26,15 @@ final class ViewController: UIViewController {
 // MARK: - WWEventSourceDelegate
 extension ViewController: WWEventSource.Delegate {
     
-    func serverSentEventsConnectionStatus(_ eventSource: WWEventSource, result: Result<WWEventSource.ConnectionStatus, Error>) {
+    func serverSentEventsConnectionStatus(_ eventSource: WWEventSource, result: Result<WWEventSource.ConnectionStatus, any Error>) {
         print(result)
     }
     
-    func serverSentEventsRawString(_ eventSource: WWEventSource, result: Result<String, Error>) {
-        
+    func serverSentEventsRawString(_ eventSource: WWEventSource, result: Result<WWEventSource.RawInformation, any Error>) {
+
         switch result {
         case .failure(let error): print(error)
-        case .success(let rawString): print(rawString)
+        case .success(let rawInformation): print(rawInformation)
         }
     }
     

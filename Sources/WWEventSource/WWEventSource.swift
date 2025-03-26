@@ -66,13 +66,15 @@ public extension WWEventSource {
         
         defer { receivedData.removeAll() }
         
+        let response = dataTask.response as? HTTPURLResponse
+        
         delegate?.serverSentEventsConnectionStatus(self, result: .success(.open))
         receivedData.append(data)
-        parseEvents(with: receivedData, encoding: encoding)
+        parseEvents(with: receivedData, encoding: encoding, response: response)
     }
     
     func urlSession(_ session: URLSession, task: URLSessionTask, didCompleteWithError error: Error?) {
-        
+                
         if let error = error { self.delegate?.serverSentEventsConnectionStatus(self, result: .failure(error)); return }
         self.delegate?.serverSentEventsConnectionStatus(self, result: .success(.closed))
     }
@@ -128,13 +130,15 @@ private extension WWEventSource {
     /// - Parameters:
     ///   - receivedData: 原始資料
     ///   - encoding: 字元編碼
-    func parseEvents(with receivedData: Data, encoding: String.Encoding) {
+    ///   - response: URLResponse?
+    func parseEvents(with receivedData: Data, encoding: String.Encoding, response: HTTPURLResponse?) {
         
+        guard let response = response else { delegate?.serverSentEventsRawString(self, result: .failure(CustomError.notHttpResponse)); return }
         guard let rawString = String(data: receivedData, encoding: encoding) else { delegate?.serverSentEventsRawString(self, result: .failure(CustomError.notEncoding)); return }
         
         var eventValues: [EventValue] = []
         
-        delegate?.serverSentEventsRawString(self, result: .success(rawString))
+        delegate?.serverSentEventsRawString(self, result: .success((rawString, response)))
         
         parseEventArray(rawString: rawString).forEach { event in
             

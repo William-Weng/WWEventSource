@@ -11,7 +11,8 @@ import WWRegularExpression
 // MARK: - typealias
 public extension WWEventSource {
     
-    typealias EventValue = (keyword: Keyword, value: String, rawValue: String)    // (事件類型, 事件值, 原始值)
+    typealias EventValue = (keyword: Keyword, value: String, rawValue: String)      // (事件類型, 事件值, 原始值)
+    typealias RawInformation = (string: String, response: HTTPURLResponse)          // (回傳文字, HTTP回應)
 }
 
 // MARK: - 常數
@@ -74,6 +75,7 @@ public extension WWEventSource {
 
         case notEncoding
         case notUrlFormat
+        case notHttpResponse
         
         /// 顯示錯誤說明
         /// - Returns: String
@@ -82,6 +84,7 @@ public extension WWEventSource {
             switch self {
             case .notEncoding: return "文字編碼格式錯誤"
             case .notUrlFormat: return "URL格式錯誤"
+            case .notHttpResponse: return "不是標準HTTP回應"
             }
         }
     }

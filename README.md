@@ -10,7 +10,7 @@
 ### [Installation with Swift Package Manager](https://medium.com/彼得潘的-swift-ios-app-開發問題解答集/使用-spm-安裝第三方套件-xcode-11-新功能-2c4ffcf85b4b)
 ```bash
 dependencies: [
-    .package(url: "https://github.com/William-Weng/WWEventSource.git", .upToNextMajor(from: "1.3.2"))
+    .package(url: "https://github.com/William-Weng/WWEventSource.git", .upToNextMajor(from: "1.3.3"))
 ]
 ```
 
@@ -54,15 +54,15 @@ final class ViewController: UIViewController {
 
 extension ViewController: WWEventSource.Delegate {
     
-    func serverSentEventsConnectionStatus(_ eventSource: WWEventSource, result: Result<WWEventSource.ConnectionStatus, Error>) {
+    func serverSentEventsConnectionStatus(_ eventSource: WWEventSource, result: Result<WWEventSource.ConnectionStatus, any Error>) {
         print(result)
     }
     
-    func serverSentEventsRawString(_ eventSource: WWEventSource, result: Result<String, Error>) {
+    func serverSentEventsRawString(_ eventSource: WWEventSource, result: Result<WWEventSource.RawInformation, any Error>) {
         
         switch result {
         case .failure(let error): print(error)
-        case .success(let rawString): print(rawString)
+        case .success(let rawInformation): print(rawInformation)
         }
     }
     
