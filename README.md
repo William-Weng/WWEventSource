@@ -30,7 +30,7 @@ dependencies: [
 |函式|功能|
 |-|-|
 |serverSentEventsConnectionStatus(_:result:)|接收連線的狀態|
-|serverSentEventsRawString(_:result:)|接收從Server端傳來的原始訊息|
+|serverSentEventsRawData(_:result:)|接收從Server端傳來的原始訊息|
 |serverSentEvents(_:eventValue:)|接收從Server端傳來的事件訊息|
 
 ### Example
