@@ -133,12 +133,12 @@ private extension WWEventSource {
     ///   - response: URLResponse?
     func parseEvents(with receivedData: Data, encoding: String.Encoding, response: HTTPURLResponse?) {
         
-        guard let response = response else { delegate?.serverSentEventsRawString(self, result: .failure(CustomError.notHttpResponse)); return }
-        guard let rawString = String(data: receivedData, encoding: encoding) else { delegate?.serverSentEventsRawString(self, result: .failure(CustomError.notEncoding)); return }
+        guard let response = response else { delegate?.serverSentEventsRawData(self, result: .failure(CustomError.notHttpResponse)); return }
+        guard let rawString = String(data: receivedData, encoding: encoding) else { delegate?.serverSentEventsRawData(self, result: .failure(CustomError.notEncoding)); return }
         
         var eventValues: [EventValue] = []
         
-        delegate?.serverSentEventsRawString(self, result: .success((rawString, response)))
+        delegate?.serverSentEventsRawData(self, result: .success((receivedData, response)))
         
         parseEventArray(rawString: rawString).forEach { event in
             
@@ -159,7 +159,7 @@ private extension WWEventSource {
         eventValues.forEach { delegate?.serverSentEvents(self, eventValue: $0) }
     }
     
-    /// 解析傳來的SSE事件文字訊息 (id: 123\nevent: 英\r文字\ndata: 中\n文\r字\n\n =>  ["id: 123\n", "event: 英\r文字\n", "data: 中\n文\r字\n\n"])
+    /// 解析傳來的SSE事件文字訊息 (id: 123\nevent: 英\r文字\ndata: 中\n文\r字\n\n => ["id: 123\n", "event: 英\r文字\n", "data: 中\n文\r字\n\n"])
     /// - Parameter rawString: String
     /// - Returns: [String]
     func parseEventArray(rawString: String) -> [String] {

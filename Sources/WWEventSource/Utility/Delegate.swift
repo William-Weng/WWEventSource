@@ -16,7 +16,7 @@ public extension WWEventSource {
         func serverSentEventsConnectionStatus(_ eventSource: WWEventSource, result: Result<WWEventSource.ConnectionStatus, Error>)
         
         /// 接收從Server端傳來的原始訊息 (data: <訊息>\n\n)
-        func serverSentEventsRawString(_ eventSource: WWEventSource, result: Result<RawInformation, Error>)
+        func serverSentEventsRawData(_ eventSource: WWEventSource, result: Result<RawInformation, Error>)
         
         /// 接收從Server端傳來的事件訊息 (event, 訊息)
         func serverSentEvents(_ eventSource: WWEventSource, eventValue: WWEventSource.EventValue)

@@ -12,7 +12,7 @@ import WWRegularExpression
 public extension WWEventSource {
     
     typealias EventValue = (keyword: Keyword, value: String, rawValue: String)      // (事件類型, 事件值, 原始值)
-    typealias RawInformation = (string: String, response: HTTPURLResponse)          // (回傳文字, HTTP回應)
+    typealias RawInformation = (data: Data, response: HTTPURLResponse)              // (原始資料, HTTP回應)
 }
 
 // MARK: - 常數

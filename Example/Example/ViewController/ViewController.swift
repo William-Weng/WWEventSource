@@ -30,7 +30,7 @@ extension ViewController: WWEventSource.Delegate {
         print(result)
     }
     
-    func serverSentEventsRawString(_ eventSource: WWEventSource, result: Result<WWEventSource.RawInformation, any Error>) {
+    func serverSentEventsRawData(_ eventSource: WWEventSource, result: Result<WWEventSource.RawInformation, any Error>) {
 
         switch result {
         case .failure(let error): print(error)
