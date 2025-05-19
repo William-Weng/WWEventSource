@@ -25,7 +25,7 @@ open class WWEventSource: NSObject {
     
     deinit {
         delegate = nil
-        print("WWEventSource - deinit")
+        print("\(Self.self) - deinit")
     }
 }
 
@@ -163,14 +163,14 @@ private extension WWEventSource {
     /// - Parameter rawString: String
     /// - Returns: [String]
     func parseEventArray(rawString: String) -> [String] {
-                
+        
         var eventArray: [String] = []
         var _array: [String] = []
         
         rawString.components(separatedBy: "\n").forEach { string in
             
-            let isMatche = matche(rawString: string)
-            if (isMatche) { eventArray.append("\(string)\n"); return }
+            let isMatch = match(rawString: string)
+            if (isMatch) { eventArray.append("\(string)\n"); return }
             
             if (!_array.isEmpty) {
                 
@@ -193,7 +193,7 @@ private extension WWEventSource {
     /// 測試看看文字是否符合SSE的格式 => id:/event:/data:開頭的
     /// - Parameter rawString: String
     /// - Returns: Bool
-    func matche(rawString: String) -> Bool {
+    func match(rawString: String) -> Bool {
         
         let keywords = Keyword.allCases.map { $0.prefix() }.joined(separator: "|")
         let pattern = "^[\(keywords)].*"
@@ -217,8 +217,8 @@ private extension WWEventSource {
     /// - Parameters:
     ///   - rawString: 事件文字
     ///   - keyword: Constant.Keyword
-    /// - Returns: Result<[String]?, Error>
-    func parseEventString(_ eventString: String, keyword: Keyword) -> Result<String?, Error> {
+    /// - Returns: Result<String, Error>
+    func parseEventString(_ eventString: String, keyword: Keyword) -> Result<String, Error> {
         
         let result = keyword.parseEventString(eventString)
                 
@@ -229,7 +229,7 @@ private extension WWEventSource {
             guard let array = array,
                   let value = array.first
             else {
-                return .success(nil)
+                return .failure(CustomError.isEmpty)
             }
             
             return .success(value)

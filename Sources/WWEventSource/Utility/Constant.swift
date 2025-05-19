@@ -73,6 +73,7 @@ public extension WWEventSource {
         
         var errorDescription: String { errorMessage() }
 
+        case isEmpty
         case notEncoding
         case notUrlFormat
         case notHttpResponse
@@ -82,6 +83,7 @@ public extension WWEventSource {
         private func errorMessage() -> String {
             
             switch self {
+            case .isEmpty: return "空值"
             case .notEncoding: return "文字編碼格式錯誤"
             case .notUrlFormat: return "URL格式錯誤"
             case .notHttpResponse: return "不是標準HTTP回應"
