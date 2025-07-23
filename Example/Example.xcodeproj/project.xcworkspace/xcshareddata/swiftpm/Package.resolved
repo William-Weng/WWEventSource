@@ -6,8 +6,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/William-Weng/WWEventSource",
       "state" : {
-        "revision" : "5bddc7c58032951b5e2f6e8913e654465294d0e6",
-        "version" : "1.4.0"
+        "revision" : "6ea3d939a84cea2391098d9519e4fca0efd7bb13",
+        "version" : "1.4.1"
       }
     },
     {

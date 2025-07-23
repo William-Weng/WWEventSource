@@ -13,7 +13,7 @@ final class ViewController: UIViewController {
 
     @IBOutlet weak var eventStringLabel: UILabel!
     
-    private let urlString = "http://localhost:54321/sse"
+    private let urlString = "http://localhost:54321/demo"
     private var tempMessage = ""
     
     @IBAction func sseTest(_ sender: UIBarButtonItem) {
