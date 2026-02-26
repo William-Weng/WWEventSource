@@ -5,6 +5,8 @@
 - [Use URLSession to implement the functions of the SSE client and receive information from the SSE server.]()
 - [使用URLSession來實作SSE的Client端的功能，可以接收SSE Server端傳來的資訊。](https://apifox.com/apiskills/sse-vs-websocket/)
 
+https://github.com/user-attachments/assets/ee734f09-1d81-4bb4-b3a7-2bc08c16f7e8
+
 ### [Installation with Swift Package Manager](https://medium.com/彼得潘的-swift-ios-app-開發問題解答集/使用-spm-安裝第三方套件-xcode-11-新功能-2c4ffcf85b4b)
 ```bash
 dependencies: [
