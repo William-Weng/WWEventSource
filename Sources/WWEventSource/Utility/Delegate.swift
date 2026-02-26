@@ -10,7 +10,7 @@ import AVFoundation
 // MARK: - WWEventSource.Delegate
 public extension WWEventSource {
     
-    public protocol Delegate: NSObjectProtocol {
+    protocol Delegate: NSObjectProtocol {
         
         /// 接收連線的狀態
         func serverSentEventsConnectionStatus(_ eventSource: WWEventSource, result: Result<WWEventSource.ConnectionStatus, Error>)

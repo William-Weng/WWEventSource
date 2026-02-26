@@ -5,12 +5,10 @@
 - [Use URLSession to implement the functions of the SSE client and receive information from the SSE server.]()
 - [使用URLSession來實作SSE的Client端的功能，可以接收SSE Server端傳來的資訊。](https://apifox.com/apiskills/sse-vs-websocket/)
 
-![](./Example.webp)
-
 ### [Installation with Swift Package Manager](https://medium.com/彼得潘的-swift-ios-app-開發問題解答集/使用-spm-安裝第三方套件-xcode-11-新功能-2c4ffcf85b4b)
 ```bash
 dependencies: [
-    .package(url: "https://github.com/William-Weng/WWEventSource.git", .upToNextMajor(from: "1.4.1"))
+    .package(url: "https://github.com/William-Weng/WWEventSource.git", .upToNextMajor(from: "1.4.2"))
 ]
 ```
 
@@ -72,11 +70,17 @@ extension ViewController: WWEventSource.Delegate {
         case .id: print(eventValue)
         case .event: print(eventValue)
         case .retry: print(eventValue)
-        case .data: print(eventValue)
-            tempMessage += eventValue.value
-            DispatchQueue.main.async { self.eventStringLabel.text = self.tempMessage }
+        case .data: tempMessage += eventValue.value; eventStringLabel.text = tempMessage
         }
     }
 }
+```
+
+### 網路測試環境
+```
+python3 -m venv .venv
+source ./venv/bin/activate
+pip install flask requests rich
+python3 sse.py
 ```
 

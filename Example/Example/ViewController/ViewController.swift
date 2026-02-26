@@ -13,7 +13,7 @@ final class ViewController: UIViewController {
 
     @IBOutlet weak var eventStringLabel: UILabel!
     
-    private let urlString = "http://localhost:54321/demo"
+    private let urlString = "http://localhost:54321/sse"
     private var tempMessage = ""
     
     @IBAction func sseTest(_ sender: UIBarButtonItem) {
@@ -31,7 +31,7 @@ extension ViewController: WWEventSource.Delegate {
     }
     
     func serverSentEventsRawData(_ eventSource: WWEventSource, result: Result<WWEventSource.RawInformation, any Error>) {
-
+        
         switch result {
         case .failure(let error): print(error)
         case .success(let rawInformation): print(rawInformation)
@@ -39,14 +39,12 @@ extension ViewController: WWEventSource.Delegate {
     }
     
     func serverSentEvents(_ eventSource: WWEventSource, eventValue: WWEventSource.EventValue) {
-        
+                
         switch eventValue.keyword {
         case .id: print(eventValue)
         case .event: print(eventValue)
         case .retry: print(eventValue)
-        case .data: print(eventValue)
-            tempMessage += eventValue.value
-            DispatchQueue.main.async { self.eventStringLabel.text = self.tempMessage }
+        case .data: tempMessage += eventValue.value; eventStringLabel.text = tempMessage
         }
     }
 }

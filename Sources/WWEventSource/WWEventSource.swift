@@ -54,7 +54,7 @@ public extension WWEventSource {
         delegate = nil
         dataTask?.cancel()
         session?.invalidateAndCancel()
-        self.delegate?.serverSentEventsConnectionStatus(self, result: .success(.closed))
+        serverSentEventsConnectionStatus(self, result: .success(.closed))
     }
 }
 
@@ -68,15 +68,15 @@ public extension WWEventSource {
         
         let response = dataTask.response as? HTTPURLResponse
         
-        delegate?.serverSentEventsConnectionStatus(self, result: .success(.open))
+        serverSentEventsConnectionStatus(self, result: .success(.open))
         receivedData.append(data)
         parseEvents(with: receivedData, encoding: encoding, response: response)
     }
     
     func urlSession(_ session: URLSession, task: URLSessionTask, didCompleteWithError error: Error?) {
                 
-        if let error = error { self.delegate?.serverSentEventsConnectionStatus(self, result: .failure(error)); return }
-        self.delegate?.serverSentEventsConnectionStatus(self, result: .success(.closed))
+        if let error = error { serverSentEventsConnectionStatus(self, result: .failure(error)); return }
+        serverSentEventsConnectionStatus(self, result: .success(.closed))
     }
 }
 
@@ -120,8 +120,7 @@ private extension WWEventSource {
         
         dataTask = session?.dataTask(with: request)
         dataTask?.resume()
-        
-        self.delegate?.serverSentEventsConnectionStatus(self, result: .success(.connecting))
+        serverSentEventsConnectionStatus(self, result: .success(.connecting))
         
         return .success(dataTask)
     }
@@ -133,12 +132,12 @@ private extension WWEventSource {
     ///   - response: URLResponse?
     func parseEvents(with receivedData: Data, encoding: String.Encoding, response: HTTPURLResponse?) {
         
-        guard let response = response else { delegate?.serverSentEventsRawData(self, result: .failure(CustomError.notHttpResponse)); return }
-        guard let rawString = String(data: receivedData, encoding: encoding) else { delegate?.serverSentEventsRawData(self, result: .failure(CustomError.notEncoding)); return }
+        guard let response = response else { serverSentEventsRawData(self, result: .failure(CustomError.notHttpResponse)); return }
+        guard let rawString = String(data: receivedData, encoding: encoding) else { serverSentEventsRawData(self, result: .failure(CustomError.notEncoding)); return }
         
         var eventValues: [EventValue] = []
         
-        delegate?.serverSentEventsRawData(self, result: .success((receivedData, response)))
+        serverSentEventsRawData(self, result: .success((receivedData, response)))
         
         parseEventArray(rawString: rawString).forEach { event in
             
@@ -156,7 +155,7 @@ private extension WWEventSource {
             }
         }
         
-        eventValues.forEach { delegate?.serverSentEvents(self, eventValue: $0) }
+        eventValues.forEach { serverSentEvents(self, eventValue: $0) }
     }
     
     /// 解析傳來的SSE事件文字訊息 (id: 123\nevent: 英\r文字\ndata: 中\n文\r字\n\n => ["id: 123\n", "event: 英\r文字\n", "data: 中\n文\r字\n\n"])
@@ -234,5 +233,24 @@ private extension WWEventSource {
             
             return .success(value)
         }
+    }
+}
+
+// MARK: - 將delegate回應切到Main Thread
+private extension WWEventSource {
+    
+    func serverSentEventsConnectionStatus(_ eventSource: WWEventSource, result: Result<WWEventSource.ConnectionStatus, Error>) {
+        guard let delegate = delegate else { return }
+        Task { @MainActor in delegate.serverSentEventsConnectionStatus(self, result: result) }
+    }
+    
+    func serverSentEventsRawData(_ eventSource: WWEventSource, result: Result<WWEventSource.RawInformation, any Error>) {
+        guard let delegate = delegate else { return }
+        Task { @MainActor in delegate.serverSentEventsRawData(self, result: result) }
+    }
+    
+    func serverSentEvents(_ eventSource: WWEventSource, eventValue: WWEventSource.EventValue) {
+        guard let delegate = delegate else { return }
+        Task { @MainActor in delegate.serverSentEvents(self, eventValue: eventValue) }
     }
 }
